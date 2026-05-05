@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Model Pricing V2 — Live Data</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:100vh;padding:2rem 1rem}
+.hd{text-align:center;margin-bottom:1.5rem}
+.hd h1{font-size:clamp(1.5rem,4vw,2.4rem);font-weight:800;background:linear-gradient(135deg,#6366F1,#EC4899,#F59E0B);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.hd p{color:#71718A;font-size:.82rem}
+.hd a{color:#6366F1;text-decoration:none}
+.live-badge{display:inline-block;margin-top:.4rem;padding:.2rem .7rem;background:#16162D;border:1px solid #10B981;border-radius:20px;font-size:.68rem;color:#10B981}
+#mn{display:flex;justify-content:center;gap:.5rem;margin-bottom:2rem;flex-wrap:wrap}
+#mn button{padding:.5rem 1.2rem;border:1px solid #2E2E4A;border-radius:8px;background:transparent;color:#A1A1B5;font-family:'Inter',sans-serif;font-size:.8rem;cursor:pointer;transition:all .2s}
+#mn button:hover{border-color:#6366F1;color:#6366F1}
+#mn .ac{background:#6366F1;border-color:#6366F1;color:#fff}
+.vp{display:none}.vp.on{display:block}
+.legend{display:flex;justify-content:center;gap:1.5rem;margin:.8rem 0 1rem;flex-wrap:wrap;font-size:.72rem;color:#71718A}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px}
+.status-bar{text-align:center;margin-bottom:1rem;padding:.4rem .8rem;border-radius:8px;font-size:.72rem;background:#16162D;border:1px solid #1E1E3A;display:flex;justify-content:center;align-items:center;gap:.5rem}
+.status-bar .live{color:#10B981;font-weight:600}
+.status-bar .loading{color:#F59E0B;font-weight:600}
+.status-bar .error-msg{color:#EF4444;font-weight:600}
+.refresh-btn{background:none;border:1px solid #2E2E4A;color:#A1A1B5;padding:.2rem .5rem;border-radius:6px;cursor:pointer;font-size:.68rem}
+.refresh-btn:hover{border-color:#6366F1;color:#6366F1}
+.refresh-btn.spinning{animation:spin 1s linear infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+#sb{display:flex;justify-content:center;gap:.4rem;margin-bottom:1.5rem;flex-wrap:wrap}
+#sb button{padding:.35rem .7rem;border:1px solid #2E2E4A;border-radius:8px;background:transparent;color:#A1A1B5;font-family:'Inter',sans-serif;font-size:.7rem;cursor:pointer;transition:all .2s}
+#sb button:hover{border-color:#6366F1}
+#sb .so{background:#6366F1;border-color:#6366F1;color:#fff}
+.gd{display:grid;gap:1rem;max-width:1100px;margin:0 auto}
+.cd{background:#12122A;border:1px solid #1E1E3A;border-radius:14px;padding:1.2rem;transition:all .3s;border-left:4px solid}
+.cd:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem}
+.ct{display:flex;align-items:center;gap:.6rem}
+.d2{width:12px;height:12px;border-radius:4px;flex-shrink:0}
+.ct h2{font-size:1rem;font-weight:700}
+.badge2{font-size:.58rem;padding:.1rem .35rem;border-radius:20px;background:rgba(99,102,241,.15);color:#818CF8}
+.ps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;margin-bottom:.7rem}
+@media(max-width:700px){.ps{grid-template-columns:1fr}}
+.pb{background:rgba(255,255,255,.03);border-radius:10px;padding:.8rem}
+.pb h3{font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:#71718A;margin-bottom:.4rem}
+.pr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.2rem}
+.pl{font-size:.77rem;color:#A1A1B5;min-width:42px}
+.pv{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500}
+.gc{color:#10B981}.re{color:#EF4444}.nc{color:#D4D4E8}
+.sub2{font-size:.62rem;color:#52526B;margin-top:.3rem}
+.ag{padding-top:.55rem;border-top:1px solid #1E1E3A;margin-top:.6rem}
+.al2{font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:#52526B;margin-bottom:.2rem}
+.at{font-size:.75rem;color:#A1A1B5;line-height:1.4}
+.sm2{display:flex;justify-content:space-between;align-items:center;padding-top:.55rem;border-top:1px solid #1E1E3A;margin-top:.6rem;flex-wrap:wrap;gap:.3rem;font-size:.68rem}
+.tg2{margin-top:.5rem;font-size:.65rem;color:#6366F1;cursor:pointer;background:none;border:none;font-family:inherit;text-decoration:underline}
+.pt{display:none;margin-top:.5rem;width:100%;font-size:.65rem;border-collapse:collapse}
+.pt.po{display:table}
+.pt th{text-align:left;padding:.25rem;color:#71718A;border-bottom:1px solid #1E1E3A;font-weight:500}
+.pt td{padding:.25rem;color:#A1A1B5;border-bottom:1px solid rgba(30,30,58,.4);font-family:'JetBrains Mono',monospace}
+.pt td:first-child{font-family:'Inter',sans-serif}
+.pt .br{background:rgba(16,185,129,.08)}
+.bt{width:100%;max-width:1100px;margin:0 auto;border-collapse:collapse;font-size:.78rem}
+.bt th{padding:.55rem .4rem;text-align:left;color:#71718A;border-bottom:2px solid #1E1E3A;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:.04em}
+.bt td{padding:.5rem .4rem;border-bottom:1px solid rgba(30,30,58,.5)}
+.bt tr:hover{background:rgba(99,102,241,.04)}
+.mc2{display:flex;align-items:center;gap:.5rem;font-weight:600}
+.d3{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.bst{color:#10B981}.bgd{color:#E4E4F0}.bmd{color:#A1A1B5}.bna{color:#33335A}
+.ba{height:5px;border-radius:3px;background:#1E1E3A;margin-top:3px;overflow:hidden}
+.bf{height:100%;border-radius:3px}
+.oc2{max-width:1100px;margin:0 auto}
+.oc2 h3{font-size:1rem;font-weight:700;margin-bottom:1rem}
+.rc{background:#12122A;border:1px solid #1E1E3A;border-radius:12px;padding:1rem;margin-bottom:.8rem;border-left:4px solid}
+.rc h4{font-weight:600;font-size:.9rem;margin-bottom:.3rem}
+.rc p{font-size:.78rem;color:#A1A1B5;line-height:1.5}
+.rp{color:#52526B;font-size:.65rem;margin-top:.2rem}
+.tag{display:inline-block;padding:.12rem .35rem;border-radius:4px;font-size:.62rem;font-weight:600;margin-right:.3rem;margin-top:.3rem}
+.tgb{background:rgba(16,185,129,.15);color:#10B981}.tgv{background:rgba(99,102,241,.15);color:#818CF8}.tgf{background:rgba(245,158,11,.15);color:#F59E0B}
+.ost{background:#12122A;border:1px solid #1E1E3A;border-radius:12px;padding:1rem;margin-top:1rem}
+.ost p{font-size:.78rem;color:#A1A1B5;line-height:1.6}
+.ost b{color:#E4E4F0}
+.placeholder{background:#12122A;border:2px dashed #1E1E3A;border-radius:14px;padding:2rem;text-align:center;color:#52526B;font-size:.85rem}
+</style></head>
+
+<body>
+<div class="hd">
+<h1>AI Model Pricing V2 — Live Data</h1>
+<p>Prix temps réel depuis <a href="https://openrouter.ai" target="_blank">OpenRouter</a> + Benchmarks agentic</p>
+<div class="live-badge">⚡ Auto-refresh toutes les 30 min | Source: OpenRouter API</div>
+</div>
+<div id="mn">
+<button class="ac" data-t="pricing">Pricing</button>
+<button data-t="benchmarks">Benchmark</button>
+<button data-t="openclaw">OpenClaw</button>
+</div>
+<div id="status-bar" class="status-bar">
+<span class="loading" id="status-text">🔄 Chargement des prix...</span>
+<button id="refresh-btn" class="refresh-btn" onclick="window.fetchPrices()">&#x21bb; Rafraîchir</button>
+</div>
+<div id="v-pricing" class="vp on">
+<div class="legend"><span><span class="dot" style="background:#10B981"></span> Moins cher</span><span><span class="dot" style="background:#EF4444"></span> Plus cher</span></div>
+<div id="sb"><button class="so" data-s="ct">Coût total min</button><button data-s="ci">Input min</button><button data-s="cm">Coût total max</button></div>
+<div id="loading-box"><div class="placeholder">Chargement des données OpenRouter...</div></div>
+<div id="gd" class="gd" style="display:none"></div>
+</div>
+<div id="v-benchmarks" class="vp">
+<div class="legend"><span class="bst" style="font-weight:600">★ Top</span><span class="bgd">Bon</span><span class="bmd">Moyen</span><span class="bna">N/A</span></div>
+<div style="max-width:1100px;margin:0 auto;overflow-x:auto">
+<table class="bt">
+<tr><th style="min-width:160px">Modèle</th>
+<th title="SWE-bench Verified">SWE-Ver</th>
+<th title="SWE-bench Pro">SWE Pro</th>
+<th title="MCP-Atlas">MCP</th>
+<th title="Terminal-Bench">Term</th>
+<th title="Finance Agent">Fin</th>
+<th title="Arena Coding">Coding</th>
+<th>Notes</th></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#20C997"></div>OpenAI GPT-5.5</div></td><td><div class="bgd" style="text-align:center">82.6%</div><div class="ba"><div class="bf" style="width:94.29223744292237%;background:#20C997"></div></div></td><td><div class="bgd" style="text-align:center">58.6%</div><div class="ba"><div class="bf" style="width:91.1353032659409%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">82.7%</div><div class="ba"><div class="bf" style="width:100%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">1520</div><div class="ba"><div class="bf" style="width:95.0%;background:#20C997"></div></div></td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">Terminal-Bench 82.7%, Expert-SWE 73.1%</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#E8554A"></div>Claude Opus 4.7</div></td><td><div class="bst" style="text-align:center">87.6%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">64.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">77.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">64.4%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">1548</div><div class="ba"><div class="bf" style="width:96.75%;background:#E8554A"></div></div></td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">#1 SWE-Pro 64.3%, MCP-Atlas 77.3%, GPQA 94.2%</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#E8554A"></div>Claude Sonnet 4.6</div></td><td><div class="bgd" style="text-align:center">79.6%</div><div class="ba"><div class="bf" style="width:90.8675799086758%;background:#E8554A"></div></div></td><td><div class="bgd" style="text-align:center">53.4%</div><div class="ba"><div class="bf" style="width:83.04821150855366%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">75.8%</div><div class="ba"><div class="bf" style="width:98.05950840879689%;background:#E8554A"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">60.1%</div><div class="ba"><div class="bf" style="width:93.32298136645963%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">1530</div><div class="ba"><div class="bf" style="width:95.625%;background:#E8554A"></div></div></td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">79.6% SWE-Ver at ~50% Opus price. Arena 1530</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#6366F1"></div>DeepSeek V4 Pro</div></td><td><div class="bmd" style="text-align:center">~66%</div><div class="ba"><div class="bf" style="width:75.34246575342466%;background:#6366F1"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">~66% SWE-Ver at 10x cheaper than frontier</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#F59E0B"></div>Qwen 3.6 Plus</div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">No public agentic scores yet</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#EC4899"></div>Kimi K2.6</div></td><td><div class="bmd" style="text-align:center">~70%</div><div class="ba"><div class="bf" style="width:79.90867579908677%;background:#EC4899"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">~70% SWE-Ver. 100 sub-agents, 1500 parallel calls</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#10B981"></div>MiniMax M2.7</div></td><td><div class="bgd" style="text-align:center">~72.5%</div><div class="ba"><div class="bf" style="width:82.76255707762557%;background:#10B981"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">~72.5% SWE-Ver. Best overall value</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#8B5CF6"></div>GLM-5.1</div></td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">58.4%</div><div class="ba"><div class="bf" style="width:90.82426127527216%;background:#8B5CF6"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">SWE-Pro 58.4% best among non-OpenAI/Anthropic</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#1DA1F2"></div>Grok 4.3</div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
+<td style="font-size:.7rem;color:#71718A;max-width:160px">No public agentic benchmark scores yet</td></tr>
+</table></div></div>
+<div id="v-openclaw" class="vp"><div class="oc2">
+<h3>Recommandations pour OpenClaw</h3>
+<div class="rc" style="border-left-color:#E8554A">
+<h4 style="color:#E8554A">Codage pur — meilleur résultat</h4>
+<p>#1 SWE-bench Pro (64.3%), meilleur tool invocation (77.3%). Choix premium pour Codex, refactoring, features.</p>
+<div class="rp">Combined ~$30/M</div>
+<div><span class="tag tgb">Best perf</span></div></div>
+<div class="rc" style="border-left-color:#E8554A">
+<h4 style="color:#E8554A">Codage pur — meilleur rapport</h4>
+<p>79.6% SWE-Verified à ~50% prix d'Opus. Idéal quotidien: review PR, fixes, petites features.</p>
+<div class="rp">Combined ~$18/M</div>
+<div><span class="tag tgv">Best value</span></div></div>
+<div class="rc" style="border-left-color:#10B981">
+<h4 style="color:#10B981">Budget — prix agentique</h4>
+<p>~72.5% SWE-Ver prix imbattable. Coding autonome.</p>
+<div class="rp">Combined ~$1.50/M</div>
+<div><span class="tag tgv">Cheap agentic</span><span class="tag tgf">72.5% SWE</span></div></div>
+<div class="rc" style="border-left-color:#6366F1">
+<h4 style="color:#6366F1">Budget ultra-serré</h4>
+<p>~66% SWE-Ver prix plancher. 1.6T MoE, 49B params.</p>
+<div class="rp">Combined ~$1.30/M</div>
+<div><span class="tag tgf">Prix plancher</span></div></div>
+<div class="rc" style="border-left-color:#20C997">
+<h4 style="color:#20C997">CLI + Shell</h4>
+<p>Terminal-Bench 82.7% (meilleur), Expert-SWE 73.1%. Shell, debug.</p>
+<div class="rp">Combined ~$35/M</div>
+<div><span class="tag tgb">Terminal #1</span></div></div>
+<div style="margin-top:1.5rem">
+<h4 style="font-size:.85rem;margin-bottom:.5rem;color:#71718A;">Coût par session OpenClaw (50K in + 50K out = 100K) — <em>auto-refresh</em></h4>
+<table id="session-table" class="bt">
+<tr><th>Modèle</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr>
+</table></div>
+<div class="ost"><p>
+<b>Stratégie :</b><br>
+• <b>Default</b> : Sonnet 4.6<br>
+• <b>Complexe</b> : Opus 4.7<br>
+• <b>Fallback</b> : GPT-5.5<br>
+• <b>Budget</b> : MiniMax/DeepSeek
+</p></div>
+</div></div>
+<script>
+const TRACKED=
+[{id:"openai/gpt-5.5",label:"OpenAI GPT-5.5",color:"#20C997",ag:"Tool calling, structured outputs, 1M ctx, reasoning"},{id:"anthropic/claude-opus-4.7",label:"Claude Opus 4.7",color:"#E8554A",ag:"Long-running async agents, frontier coding, 1M ctx, computer use"},{id:"anthropic/claude-sonnet-4.6",label:"Claude Sonnet 4.6",color:"#E8554A",ag:"Frontier coding + agents, 1M ctx, best cost-perf Sonnet"},{id:"deepseek/deepseek-pro",label:"DeepSeek V4 Pro",color:"#6366F1",ag:"1.6T MoE, 49B active, 1M ctx, reasoning + coding"},{id:"qwen/qwen3-plus",label:"Qwen 3.6 Plus",color:"#F59E0B",ag:"Hybrid attn + MoE, 1M ctx, reasoning + tool use"},{id:"moonshotai/kimi-k2-6",label:"Kimi K2.6",color:"#EC4899",ag:"Agent Swarm (100 sub-agents, 1500 parallel tools)"},{id:"minimax/minimax-m2.7",label:"MiniMax M2.7",color:"#10B981",ag:"Autonomous productivity, 192K ctx, coding-first"},{id:"z-ai/glm-5.1",label:"GLM-5.1",color:"#8B5CF6",ag:"SWE-Pro 58.4%, long-horizon tasks, 202K ctx"},{id:"x-ai/grok-4.3",label:"Grok 4.3",color:"#1DA1F2",ag:"Reasoning model, agentic workflows, 1M ctx, image input"}];
+const REFRESH_MS=30*60*1000;
+let lastData=null, refreshTimer=null;
+
+function fm(x){var v=x*1e6;if(v===0)return"Free";return(v>=1)?"$"+v.toFixed(2):"$"+v.toFixed(4)}
+function fms(x){var v=x*1e6;if(v===0)return"Free";if(v>=1)return"$"+v.toFixed(2);if(v>=0.01)return"$"+v.toFixed(3);return"$"+v.toFixed(4)}
+
+function setStatus(text,type){var e=document.getElementById("status-text");e.className=type;e.innerHTML=text}
+function spin(on){var b=document.getElementById("refresh-btn");if(on)b.classList.add("spinning");else b.classList.remove("spinning")}
+
+function processModels(data){
+    var out=[];
+    for(var i=0;i<TRACKED.length;i++){
+        var tk=TRACKED[i];
+        var found=data.filter(function(d){return d.id===tk.id});
+        if(!found.length)continue;
+        var eps=[];
+        for(var j=0;j<found.length;j++){
+            var p=found[j].pricing;
+            if(p&&p.input!=null&&p.output!=null){
+                var nm=found[j].name||"";
+                var prov=nm.split("/")[0]||found[j].id;
+                eps.push({name:prov,i:parseFloat(p.input),o:parseFloat(p.output)});
+            }
+        }
+        if(!eps.length)continue;
+        eps.sort(function(a,b){return(a.i+a.o)-(b.i+b.o)});
+        var seen=new Set();var ue=[];
+        for(var j=0;j<eps.length;j++){
+            var k=eps[j].name+"-"+eps[j].i+"-"+eps[j].o;
+            if(!seen.has(k)){seen.add(k);ue.push(eps[j])}
+        }
+        var ci=ue.reduce(function(a,b){return b.i<a.i?b:a});
+        var co=ue.reduce(function(a,b){return b.o<a.o?b:a});
+        var mei=ue.reduce(function(a,b){return b.i>a.i?b:a});
+        var meo=ue.reduce(function(a,b){return b.o>a.o?b:a});
+        out.push({id:tk.id,label:tk.label,color:tk.color,ag:tk.ag||"",np:ue.length,
+            eps:ue,ci:ci,co:co,mei:mei,meo:meo,cc:ci.i+co.o,cm:mei.i+meo.o});
+    }
+    return out;
+}
+
+function renderCards(data){
+    var gd=document.getElementById("gd");
+    var lb=document.getElementById("loading-box");
+    gd.innerHTML="";lb.style.display="none";gd.style.display="";
+    var sorted=data.slice().sort(function(a,b){return a.cc-b.cc});
+    for(var i=0;i<sorted.length;i++){
+        var m=sorted[i];
+        var ir=m.ci.i>0?m.mei.i/m.ci.i:1;
+        var oo=m.co.o>0?m.meo.o/m.co.o:1;
+        var irs=ir.toFixed(1);var oos=oo.toFixed(1);
+        var c='<div class="cd" style="border-left-color:'+m.color+'" data-ct="'+m.cc+'" data-ci="'+m.ci.i+'" data-cm="'+m.cm+'">';
+        c+='<div class="ch"><div class="ct"><div class="d2" style="background:'+m.color+'"></div><h2>'+m.label+'</h2></div>';
+        c+='<span class="badge2">'+m.np+' provider'+(m.np>1?'s':'')+'</span></div>';
+        c+='<div class="ps">';
+        c+='<div class="pb"><h3>Moins cher / 1M</h3><div class="pr"><span class="pl">Input</span><span class="pv gc">'+fm(m.ci.i)+'</span></div>';
+        c+='<div class="pr"><span class="pl">Output</span><span class="pv gc">'+fm(m.co.o)+'</span></div>';
+        c+='<div class="sub2">'+m.ci.name+' / '+m.co.name+'</div></div>';
+        c+='<div class="pb"><h3>Plus cher / 1M</h3><div class="pr"><span class="pl">Input</span><span class="pv re">'+fm(m.mei.i)+'</span></div>';
+        c+='<div class="pr"><span class="pl">Output</span><span class="pv re">'+fm(m.meo.o)+'</span></div>';
+        c+='<div class="sub2">'+m.mei.name+' / '+m.meo.name+'</div></div>';
+        c+='<div class="pb"><h3>Combin\u00e9 in+out / 1M</h3><div class="pr"><span class="pl">Min</span><span class="pv gc">'+fm(m.cc)+'</span></div>';
+        c+='<div class="pr"><span class="pl">Max</span><span class="pv re">'+fm(m.cm)+'</span></div>';
+        c+='<div class="sub2">\u00d7'+irs+' in / \u00d7'+oos+' out</div></div>';
+        c+='</div>';
+        if(m.ag)c+='<div class="ag"><div class="al2">Agentic</div><div class="at">'+m.ag+'</div></div>';
+        c+='<div class="sm2"><span>Spread: <b class="re">in '+irs+'x</b> out <b>'+oos+'x</b></span>';
+        c+='<span>Combin\u00e9/1M: <b class="gc">'+fm(m.cc)+'</b> \u2192 <b class="re">'+fm(m.cm)+'</b></span></div>';
+        c+='<button class="tg2" onclick="toggleProv(this)">Providers</button>';
+        c+='<table class="pt"><tr><th>Provider</th><th>Input</th><th>Output</th><th>Combin\u00e9</th></tr>';
+        for(var j=0;j<m.eps.length;j++){
+            var e=m.eps[j];var cv=e.i+e.o;
+            var ib=Math.abs(e.i-m.ci.i)<1e-9;
+            c+='<tr'+(ib?' class="br"':'')+'><td>'+e.name+'</td>';
+            c+='<td class="'+(ib?'gc':'nc')+'">'+fms(e.i)+'</td>';
+            c+='<td class="'+(ib?'gc':'nc')+'">'+fms(e.o)+'</td>';
+            c+='<td class="'+(ib?'gc':'nc')+'">'+fms(cv)+'</td></tr>';
+        }
+        c+='</table></div>';
+        gd.innerHTML+=c;
+    }
+    renderSession(data);
+}
+
+function toggleProv(btn){
+    btn.nextElementSibling.classList.toggle("po");
+    btn.textContent=btn.textContent==="Providers"?"Masquer":"Providers";
+}
+
+function renderSession(data){
+    var t=document.getElementById("session-table");
+    var h='<tr><th>Mod\u00e8le</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr>';
+    for(var i=0;i<data.length;i++){
+        var m=data[i];var cc=m.cc;
+        var p100=(cc*100000).toFixed(4);
+        var u=cc<0.000003?"Budget":cc<0.000015?"Quotidien":cc<0.000035?"Premium":"Ultra-premium";
+        h+='<tr><td style="font-weight:600">'+m.label+'</td>';
+        h+='<td style="font-family:JetBrains Mono,monospace;text-align:right;color:#10B981">$ '+p100+'</td>';
+        h+='<td style="font-family:JetBrains Mono,monospace;text-align:right;color:#10B981">'+fm(cc)+'</td>';
+        h+='<td>'+u+'</td></tr>';
+    }
+    t.innerHTML=h;
+}
+
+window.fetchPrices=function(){
+    spin(true);setStatus("\ud83d\udd04 R\u00e9cup\u00e9ration...","loading");
+    fetch("https://openrouter.ai/api/v1/models").then(function(r){return r.json()}).then(function(data){
+        var models=data.data||[];
+        var out=processModels(models);
+        if(!out.length){setStatus("\u26a0 Aucun mod\u00e8le trouv\u00e9","error-msg");return}
+        lastData=out;renderCards(out);
+        var now=new Date();var ts=now.toLocaleTimeString("fr-FR");
+        setStatus("\u2705 Mis \u00e0 jour \u00e0 "+ts+" ("+out.length+" mod\u00e8les)","live");
+        spin(false);
+        if(refreshTimer)clearTimeout(refreshTimer);
+        refreshTimer=setTimeout(window.fetchPrices,REFRESH_MS);
+    }).catch(function(err){
+        console.error(err);
+        if(lastData){setStatus("\u26a0 Erseau - derni\u00e8res donn\u00e9es","error-msg")}
+        else{setStatus("\u274c Impossible de charger les prix","error-msg")}
+        spin(false);
+    });
+};
+
+// Tab navigation
+document.getElementById("mn").addEventListener("click",function(e){
+    var t=e.target.getAttribute("data-t");
+    if(t&&!e.target.classList.contains("ac")){
+        document.querySelectorAll("#mn button").forEach(function(b){b.classList.remove("ac")});
+        e.target.classList.add("ac");
+        document.querySelectorAll(".vp").forEach(function(v){v.classList.remove("on")});
+        document.getElementById("v-"+t).classList.add("on");
+    }
+});
+
+// Sort
+document.getElementById("sb").addEventListener("click",function(e){
+    var s=e.target.getAttribute("data-s");
+    if(s&&!e.target.classList.contains("so")){
+        document.querySelectorAll("#sb button").forEach(function(b){b.classList.remove("so")});
+        e.target.classList.add("so");
+        var gd=document.getElementById("gd");
+        var cards=Array.prototype.slice.call(gd.querySelectorAll(".cd"));
+        cards.sort(function(a,b){return parseFloat(a.getAttribute("data-"+s))-parseFloat(b.getAttribute("data-"+s))});
+        cards.forEach(function(c){gd.appendChild(c)});
+    }
+});
+
+// Initial fetch
+window.fetchPrices();
+
+</script>
+</body></html>
