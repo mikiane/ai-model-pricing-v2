@@ -118,43 +118,56 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 
 <div id="v-openclaw" class="vp">
 <div class="oc2">
-<h3>Scénarios de routage recommandés pour OpenClaw</h3>
-<p style="font-size:.78rem;color:#71718A;margin-bottom:1rem">Optimisez vos coûts et performances en assignant le bon modèle à la bonne tâche, comme le fait un moteur de routage intelligent.</p>
+<h3>Scénarios de routage pour OpenClaw</h3>
+<p style="font-size:.78rem;color:#71718A;margin-bottom:1rem">Assignez le bon modèle à la bonne tâche pour optimiser le ratio performance/coût, comme un moteur de routage intelligent.</p>
 
-<div class="rc" style="border-left-color:#E8554A">
-  <h4 style="color:#E8554A">🧠 Raisonnement complexe & Architecture</h4>
-  <p><b>Claude Opus 4.8</b> : Meilleure compréhension contextuelle, planification multi-étapes et tool invocation fiable. Idéal pour concevoir une feature ou refactorer un module entier.</p>
-  <div class="rp">Coût combiné : ~$30 / 1M tokens</div>
-  <div><span class="tag tgb">Best perf</span> <span class="tag tgv">SWE-Pro #1</span></div>
+<div style="display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr))">
+  <div class="rc" style="border-left-color:#A1A1B5">
+    <h4 style="color:#A1A1B5">💬 Dialogue simple & Chat</h4>
+    <p>Réponses rapides, questions factuelles, échanges conversationnels courts.</p>
+    <p><b>Modèle :</b> Qwen 3.6 Plus ou MiniMax M3</p>
+    <div class="rp">Coût : ~$2.00 / 1M tokens</div>
+  </div>
+
+  <div class="rc" style="border-left-color:#4285F4">
+    <h4 style="color:#4285F4">✍️ Rédaction, Synthèse & Résumé</h4>
+    <p>Rédaction d'emails, résumé de threads, reformulation de contenu, ton professionnel.</p>
+    <p><b>Modèle :</b> Google Gemini 3.5 Flash ou Qwen 3.7 Plus</p>
+    <div class="rp">Coût : ~$1.60 à $10.50 / 1M tokens</div>
+  </div>
+
+  <div class="rc" style="border-left-color:#E8554A">
+    <h4 style="color:#E8554A">💻 Codage & Développement</h4>
+    <p>Création de features, refactoring, review de PR, compréhension d'un codebase entier.</p>
+    <p><b>Modèle :</b> Claude Opus 4.8 (Premium) ou DeepSeek V4 Pro (Budget)</p>
+    <div class="rp">Coût : ~$1.30 à $30.00 / 1M tokens</div>
+  </div>
+
+  <div class="rc" style="border-left-color:#20C997">
+    <h4 style="color:#20C997">⚙️ Exécution CLI & Debug Shell</h4>
+    <p>Lancement de commandes, analyse de logs d'erreur, debugging d'exécution, scripts bash.</p>
+    <p><b>Modèle :</b> OpenAI GPT-5.5</p>
+    <div class="rp">Coût : ~$35.00 / 1M tokens</div>
+  </div>
+
+  <div class="rc" style="border-left-color:#F59E0B">
+    <h4 style="color:#F59E0B">📚 Analyse de documents longs (RAG)</h4>
+    <p>Lecture de PDF, extraction de données depuis de gros contextes, recherche sémantique.</p>
+    <p><b>Modèle :</b> Google Gemini 3.5 Flash ou Claude Opus 4.8</p>
+    <div class="rp">Coût : ~$10.50 à $30.00 / 1M tokens</div>
+  </div>
+
+  <div class="rc" style="border-left-color:#10B981">
+    <h4 style="color:#10B981">🔄 Boucles d'agents & Tâches Background</h4>
+    <p>Agents autonomes, classification, nettoyage de données, appels d'outils en boucle à haut volume.</p>
+    <p><b>Modèle :</b> DeepSeek V4 Flash ou Qwen 3.6 Plus</p>
+    <div class="rp">Coût : ~$0.30 à $2.00 / 1M tokens</div>
+  </div>
 </div>
 
-<div class="rc" style="border-left-color:#20C997">
-  <h4 style="color:#20C997">💻 Codage, CLI & Debug Shell</h4>
-  <p><b>OpenAI GPT-5.5</b> : Score Terminal-Bench 82.7%. Excellence en génération de code, exécution de commandes shell et débogage d'erreurs d'exécution.</p>
-  <div class="rp">Coût combiné : ~$35 / 1M tokens</div>
-  <div><span class="tag tgb">Terminal #1</span> <span class="tag tgv">Expert-SWE 73%</span></div>
-</div>
-
-<div class="rc" style="border-left-color:#4285F4">
-  <h4 style="color:#4285F4">🔍 Recherche Web & Analyse de Documents (RAG)</h4>
-  <p><b>Google Gemini 3.5 Flash</b> : Fenêtre de contexte massive, traitement rapide de longs documents et excellent rapport qualité/prix pour l'extraction d'informations.</p>
-  <div class="rp">Coût combiné : ~$10.50 / 1M tokens</div>
-  <div><span class="tag tgv">Fast & Large Context</span></div>
-</div>
-
-<div class="rc" style="border-left-color:#10B981">
-  <h4 style="color:#10B981">⚡ Tâches de routine, Background & Boucles d'agents</h4>
-  <p><b>Qwen 3.6 Plus / DeepSeek V4 Flash / MiniMax M3</b> : Coût imbattable pour les tâches répétitives, la classification, les résumés ou les agents qui tournent en boucle avec de nombreux appels d'outils.</p>
-  <div class="rp">Coût combiné : ~$1.50 à $3.00 / 1M tokens</div>
-  <div><span class="tag tgv">Cheap agentic</span> <span class="tag tgf">High volume</span></div>
-</div>
-
-<div class="ost">
-  <p><b>🎯 Stratégie de routing par défaut :</b><br>
-  • <b>Tâche principale / Créative</b> → Opus 4.8<br>
-  • <b>Exécution technique / Shell</b> → GPT-5.5<br>
-  • <b>Lecture de contexte long / RAG</b> → Gemini 3.5 Flash<br>
-  • <b>Tâches de fond / Vérifications</b> → Qwen 3.6 Plus ou DeepSeek V4 Flash</p>
+<div class="ost" style="margin-top:1.5rem">
+  <p><b>🎯 Règle d'or du routing :</b><br>
+  Ne paie pas le prix fort pour ce qui peut être fait par un modèle mid-tier. Réserve <b>Opus 4.8</b> et <b>GPT-5.5</b> aux tâches critiques (code complexe, debug), et délègue le reste (rédaction, chat, background) aux modèles <b>Qwen</b>, <b>Gemini Flash</b> ou <b>DeepSeek</b> pour diviser tes coûts par 10 à 20.</p>
 </div>
 </div></div>
 
