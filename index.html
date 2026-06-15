@@ -388,8 +388,8 @@ function renderCards(data){
             c += '<div class="pb"><h3>Output / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.o)+'</span></div></div>';
             c += '<div class="pb"><h3>Combiné / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.cc)+'</span></div></div>';
             c += '</div>';
-            // Calcul réaliste 70/30 pour 100K tokens : 70K in + 30K out
-            const cost100k = (m.i * 70000) + (m.o * 30000);
+            // Calcul réaliste 70/30 pour 100K tokens
+            const cost100k = (m.i * 0.7 + m.o * 0.3) * 100000;
             c += '<div class="sm2" style="justify-content:center"><span>Coût session 100K (70K in + 30K out) : <b class="gc">$' + cost100k.toFixed(4) + '</b></span></div>';
         }
         c += '</div>';
@@ -411,8 +411,8 @@ function renderComparison(apiModels){
             const o = parseFloat(m.pricing?.completion || 0);
             
             // Ratio réaliste OpenClaw : 70% input, 30% output
-            // Pour 1 000 000 de tokens total : 700 000 in + 300 000 out
-            const realisticCostPer1M = (i * 700000) + (o * 300000);
+            // Prix pondéré par token × 1 000 000
+            const realisticCostPer1M = (i * 0.7 + o * 0.3) * 1000000;
             
             const b = m.benchmarks || {};
             const ai = b.artificial_analysis || {};
