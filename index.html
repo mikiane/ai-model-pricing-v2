@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>AI Model Pricing V2 — Live Data</title>
 <style>
@@ -79,6 +79,12 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 .ost p{font-size:.78rem;color:#A1A1B5;line-height:1.6}
 .ost b{color:#E4E4F0}
 .placeholder{background:#12122A;border:2px dashed #1E1E3A;border-radius:14px;padding:2rem;text-align:center;color:#52526B;font-size:.85rem}
+#search-box{max-width:1100px;margin:0 auto 1rem;padding:.5rem;background:#12122A;border:1px solid #1E1E3A;border-radius:8px;color:#E4E4F0;font-size:.85rem;width:100%}
+.catalog-table{width:100%;max-width:1100px;margin:0 auto;border-collapse:collapse;font-size:.75rem}
+.catalog-table th{padding:.5rem;text-align:left;color:#71718A;border-bottom:2px solid #1E1E3A;position:sticky;top:0;background:#12122A}
+.catalog-table td{padding:.4rem .5rem;border-bottom:1px solid rgba(30,30,58,.5)}
+.copy-btn{background:#2E2E4A;color:#A1A1B5;border:none;padding:.2rem .5rem;border-radius:4px;cursor:pointer;font-size:.65rem}
+.copy-btn:hover{background:#6366F1;color:#fff}
 </style></head>
 
 <body>
@@ -87,89 +93,72 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 <p>Prix temps réel depuis <a href="https://openrouter.ai" target="_blank">OpenRouter</a> + Benchmarks agentic</p>
 <div class="live-badge">⚡ Auto-refresh toutes les 30 min | Source: OpenRouter API</div>
 </div>
-<div id="mn"><button class="ac" data-t="pricing">Pricing</button><button data-t="benchmarks">Benchmark</button><button data-t="openclaw">OpenClaw</button></div>
+<div id="mn">
+  <button class="ac" data-t="pricing">Pricing Ciblé</button>
+  <button data-t="benchmarks">Benchmark</button>
+  <button data-t="openclaw">OpenClaw</button>
+  <button data-t="catalog">Catalogue OpenRouter</button>
+</div>
 <div id="status-bar" class="status-bar">
 <span class="loading" id="status-text">🔄 Chargement des prix...</span>
 <button id="refresh-btn" class="refresh-btn" onclick="window.fetchPrices()">&#x21bb; Rafraîchir</button>
 </div>
+
 <div id="v-pricing" class="vp on">
 <div class="legend"><span><span class="dot" style="background:#10B981"></span> Moins cher</span><span><span class="dot" style="background:#EF4444"></span> Plus cher</span></div>
 <div id="sb"><button class="so" data-s="ct">Coût total min</button><button data-s="ci">Input min</button><button data-s="cm">Coût total max</button></div>
 <div id="loading-box"><div class="placeholder">Chargement des données OpenRouter...</div></div>
 <div id="gd" class="gd" style="display:none"></div>
 </div>
+
 <div id="v-benchmarks" class="vp">
 <div class="legend"><span class="bst" style="font-weight:600">★ Top</span><span class="bgd">Bon</span><span class="bmd">Moyen</span><span class="bna">N/A</span></div>
 <div style="max-width:1100px;margin:0 auto;overflow-x:auto"><table class="bt">
-<tr><th style="min-width:160px">Modèle</th>
-<th title="SWE-bench Verified">SWE-Ver</th>
-<th title="SWE-bench Pro">SWE Pro</th>
-<th title="MCP-Atlas">MCP</th>
-<th title="Terminal-Bench">Term</th>
-<th title="Finance Agent">Fin</th>
-<th title="Arena Coding">Coding</th>
-<th>Notes</th></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#20C997"></div>OpenAI GPT-5.5</div></td><td><div class="bgd" style="text-align:center">82.6%</div><div class="ba"><div class="bf" style="width:94.29223744292237%;background:#20C997"></div></div></td><td><div class="bgd" style="text-align:center">58.6%</div><div class="ba"><div class="bf" style="width:91.1353032659409%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">82.7%</div><div class="ba"><div class="bf" style="width:100%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">1520</div><div class="ba"><div class="bf" style="width:95.0%;background:#20C997"></div></div></td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">Terminal-Bench 82.7%, Expert-SWE 73.1%</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#E8554A"></div>Claude Opus 4.7</div></td><td><div class="bst" style="text-align:center">87.6%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">64.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">77.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">64.4%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">1548</div><div class="ba"><div class="bf" style="width:96.75%;background:#E8554A"></div></div></td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">#1 SWE-Pro 64.3%, MCP-Atlas 77.3%, GPQA 94.2%</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#E8554A"></div>Claude Sonnet 4.6</div></td><td><div class="bgd" style="text-align:center">79.6%</div><div class="ba"><div class="bf" style="width:90.8675799086758%;background:#E8554A"></div></div></td><td><div class="bgd" style="text-align:center">53.4%</div><div class="ba"><div class="bf" style="width:83.04821150855366%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">75.8%</div><div class="ba"><div class="bf" style="width:98.05950840879689%;background:#E8554A"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">60.1%</div><div class="ba"><div class="bf" style="width:93.32298136645963%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">1530</div><div class="ba"><div class="bf" style="width:95.625%;background:#E8554A"></div></div></td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">79.6% SWE-Ver at ~50% Opus price. Arena 1530</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#6366F1"></div>DeepSeek V4 Pro</div></td><td><div class="bmd" style="text-align:center">~66%</div><div class="ba"><div class="bf" style="width:75.34246575342466%;background:#6366F1"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">~66% SWE-Ver at 10x cheaper than frontier</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#F59E0B"></div>Qwen 3.6 Plus</div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">No public agentic scores yet</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#EC4899"></div>Kimi K2.6</div></td><td><div class="bmd" style="text-align:center">~70%</div><div class="ba"><div class="bf" style="width:79.90867579908677%;background:#EC4899"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">~70% SWE-Ver. 100 sub-agents, 1500 parallel calls</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#10B981"></div>MiniMax M2.7</div></td><td><div class="bgd" style="text-align:center">~72.5%</div><div class="ba"><div class="bf" style="width:82.76255707762557%;background:#10B981"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">~72.5% SWE-Ver. Best overall value</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#8B5CF6"></div>GLM-5.1</div></td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">58.4%</div><div class="ba"><div class="bf" style="width:90.82426127527216%;background:#8B5CF6"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">SWE-Pro 58.4% best among non-OpenAI/Anthropic</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#1DA1F2"></div>Grok 4.3</div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td>
-<td style="font-size:.7rem;color:#71718A;max-width:160px">No public agentic benchmark scores yet</td></tr>
+<tr><th style="min-width:160px">Modèle</th><th title="SWE-bench Verified">SWE-Ver</th><th title="SWE-bench Pro">SWE Pro</th><th title="MCP-Atlas">MCP</th><th title="Terminal-Bench">Term</th><th title="Finance Agent">Fin</th><th title="Arena Coding">Coding</th><th>Notes</th></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#20C997"></div>OpenAI GPT-5.5</div></td><td><div class="bgd" style="text-align:center">82.6%</div><div class="ba"><div class="bf" style="width:94.2%;background:#20C997"></div></div></td><td><div class="bgd" style="text-align:center">58.6%</div><div class="ba"><div class="bf" style="width:91.1%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">82.7%</div><div class="ba"><div class="bf" style="width:100%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">1520</div><div class="ba"><div class="bf" style="width:95.0%;background:#20C997"></div></div></td><td style="font-size:.7rem;color:#71718A;max-width:160px">Terminal-Bench 82.7%, Expert-SWE 73.1%</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#E8554A"></div>Claude Opus 4.8</div></td><td><div class="bst" style="text-align:center">87.6%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">64.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">77.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">64.4%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">1548</div><div class="ba"><div class="bf" style="width:96.7%;background:#E8554A"></div></div></td><td style="font-size:.7rem;color:#71718A;max-width:160px">#1 SWE-Pro, MCP-Atlas 77.3%</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#4285F4"></div>Google Gemini 3.5</div></td><td><div class="bgd" style="text-align:center">80.1%</div><div class="ba"><div class="bf" style="width:91.4%;background:#4285F4"></div></div></td><td><div class="bgd" style="text-align:center">55.2%</div><div class="ba"><div class="bf" style="width:86%;background:#4285F4"></div></div></td><td><div class="bgd" style="text-align:center">74.5%</div><div class="ba"><div class="bf" style="width:96.5%;background:#4285F4"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">1480</div><div class="ba"><div class="bf" style="width:92.5%;background:#4285F4"></div></div></td><td style="font-size:.7rem;color:#71718A;max-width:160px">Excellent rapport perf/prix multimodal</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#6366F1"></div>DeepSeek V4</div></td><td><div class="bmd" style="text-align:center">~66%</div><div class="ba"><div class="bf" style="width:75.3%;background:#6366F1"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">~66% SWE-Ver à prix plancher</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#F59E0B"></div>Qwen 3.6 / 3.7</div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">Hybrid attn + MoE, 1M ctx</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#8B5CF6"></div>GLM 5.2</div></td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">58.4%</div><div class="ba"><div class="bf" style="width:90.8%;background:#8B5CF6"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">SWE-Pro 58.4% best among non-frontier</td></tr>
+<tr><td><div class="mc2"><div class="d3" style="background:#10B981"></div>MiniMax M3</div></td><td><div class="bgd" style="text-align:center">~72.5%</div><div class="ba"><div class="bf" style="width:82.7%;background:#10B981"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">Autonomous productivity, 192K ctx</td></tr>
 </table></div></div>
+
 <div id="v-openclaw" class="vp"><div class="oc2"><h3>Recommandations pour OpenClaw</h3>
-<div class="rc" style="border-left-color:#E8554A">
-<h4 style="color:#E8554A">Codage pur — meilleur résultat</h4>
-<p>#1 SWE-bench Pro (64.3%), meilleur tool invocation (77.3%). Choix premium pour Codex, refactoring, features.</p>
-<div class="rp">Combined ~$30/M</div>
-<div><span class="tag tgb">Best perf</span></div></div>
-<div class="rc" style="border-left-color:#E8554A">
-<h4 style="color:#E8554A">Codage pur — meilleur rapport</h4>
-<p>79.6% SWE-Verified à ~50% prix d'Opus. Idéal quotidien: review PR, fixes, petites features.</p>
-<div class="rp">Combined ~$18/M</div>
-<div><span class="tag tgv">Best value</span></div></div>
-<div class="rc" style="border-left-color:#10B981">
-<h4 style="color:#10B981">Budget — prix agentique</h4>
-<p>~72.5% SWE-Ver prix imbattable. Coding autonome.</p>
-<div class="rp">Combined ~$1.50/M</div>
-<div><span class="tag tgv">Cheap agentic</span><span class="tag tgf">72.5% SWE</span></div></div>
-<div class="rc" style="border-left-color:#6366F1">
-<h4 style="color:#6366F1">Budget ultra-serré</h4>
-<p>~66% SWE-Ver prix plancher. 1.6T MoE, 49B params.</p>
-<div class="rp">Combined ~$1.30/M</div>
-<div><span class="tag tgf">Prix plancher</span></div></div>
-<div class="rc" style="border-left-color:#20C997">
-<h4 style="color:#20C997">CLI + Shell</h4>
-<p>Terminal-Bench 82.7% (meilleur), Expert-SWE 73.1%. Shell, debug.</p>
-<div class="rp">Combined ~$35/M</div>
-<div><span class="tag tgb">Terminal #1</span></div></div>
-<div style="margin-top:1.5rem">
-<h4 style="font-size:.85rem;margin-bottom:.5rem;color:#71718A;">Coût par session OpenClaw (50K in + 50K out = 100K) — <em>auto-refresh</em></h4>
-<table id="session-table" class="bt"><tr><th>Modèle</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr>
-</table></div>
-<div class="ost"><p>
-<b>Stratégie :</b><br>
-• <b>Default</b> : Sonnet 4.6<br>
-• <b>Complexe</b> : Opus 4.7<br>
-• <b>Fallback</b> : GPT-5.5<br>
-• <b>Budget</b> : MiniMax/DeepSeek
-</p></div>
+<div class="rc" style="border-left-color:#E8554A"><h4 style="color:#E8554A">Codage pur — meilleur résultat</h4><p>Claude Opus 4.8 : #1 SWE-bench Pro, meilleur tool invocation. Choix premium pour Codex, refactoring, features.</p><div class="rp">Combined ~$30/M</div><div><span class="tag tgb">Best perf</span></div></div>
+<div class="rc" style="border-left-color:#20C997"><h4 style="color:#20C997">CLI + Shell</h4><p>OpenAI GPT-5.5 : Terminal-Bench 82.7% (meilleur), Expert-SWE 73.1%. Shell, debug.</p><div class="rp">Combined ~$35/M</div><div><span class="tag tgb">Terminal #1</span></div></div>
+<div class="rc" style="border-left-color:#10B981"><h4 style="color:#10B981">Budget — prix agentique</h4><p>MiniMax M3 / DeepSeek V4 : ~72.5% SWE-Ver à prix imbattable. Coding autonome.</p><div class="rp">Combined ~$1.50/M</div><div><span class="tag tgv">Cheap agentic</span><span class="tag tgf">72.5% SWE</span></div></div>
+<div style="margin-top:1.5rem"><h4 style="font-size:.85rem;margin-bottom:.5rem;color:#71718A;">Coût par session OpenClaw (50K in + 50K out = 100K) — <em>auto-refresh</em></h4>
+<table id="session-table" class="bt"><tr><th>Modèle</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr></table></div>
+<div class="ost"><p><b>Stratégie :</b><br>• <b>Default</b> : Sonnet 4.6<br>• <b>Complexe</b> : Opus 4.8<br>• <b>Fallback</b> : GPT-5.5<br>• <b>Budget</b> : MiniMax / DeepSeek</p></div>
 </div></div>
+
+<div id="v-catalog" class="vp">
+<div class="oc2">
+<h3>Catalogue complet OpenRouter (Base d'enrichissement)</h3>
+<p style="font-size:.78rem;color:#71718A;margin-bottom:1rem">Recherchez un modèle, copiez son ID exact et ajoutez-le à la liste ciblée. Tous les modèles disponibles sur l'API OpenRouter sont listés ici.</p>
+<input type="text" id="search-box" placeholder="🔍 Rechercher un modèle (ex: qwen, deepseek, gpt-5)..." oninput="filterCatalog()">
+<div style="max-height:600px;overflow-y:auto;border:1px solid #1E1E3A;border-radius:8px;background:#12122A">
+<table class="catalog-table" id="catalog-table">
+<tr><th>ID du Modèle</th><th>Nom</th><th>Input / 1M</th><th>Output / 1M</th><th>Action</th></tr>
+<tbody id="catalog-body"></tbody>
+</table>
+</div>
+</div></div>
+
 <script>
-const TRACKED=[{id:"openai/gpt-5.5",label:"OpenAI GPT-5.5",color:"#20C997",ag:"Tool calling, structured outputs, 1M ctx, reasoning"},{id:"anthropic/claude-opus-4.7",label:"Claude Opus 4.7",color:"#E8554A",ag:"Long-running async agents, frontier coding, 1M ctx, computer use"},{id:"anthropic/claude-sonnet-4.6",label:"Claude Sonnet 4.6",color:"#E8554A",ag:"Frontier coding + agents, 1M ctx, best cost-perf Sonnet"},{id:"deepseek/deepseek-pro",label:"DeepSeek V4 Pro",color:"#6366F1",ag:"1.6T MoE, 49B active, 1M ctx, reasoning + coding"},{id:"qwen/qwen3-plus",label:"Qwen 3.6 Plus",color:"#F59E0B",ag:"Hybrid attn + MoE, 1M ctx, reasoning + tool use"},{id:"moonshotai/kimi-k2-6",label:"Kimi K2.6",color:"#EC4899",ag:"Agent Swarm (100 sub-agents, 1500 parallel tools)"},{id:"minimax/minimax-m2.7",label:"MiniMax M2.7",color:"#10B981",ag:"Autonomous productivity, 192K ctx, coding-first"},{id:"z-ai/glm-5.1",label:"GLM-5.1",color:"#8B5CF6",ag:"SWE-Pro 58.4%, long-horizon tasks, 202K ctx"},{id:"x-ai/grok-4.3",label:"Grok 4.3",color:"#1DA1F2",ag:"Reasoning model, agentic workflows, 1M ctx, image input"}];
-const REFRESH_MS=30*60*1000;
-let lastData=null, refreshTimer=null;
+const REQUESTED_MODELS = [
+  { key: "gpt-5", label: "OpenAI GPT-5.5", color: "#20C997", fallbackPrice: 0.000035 },
+  { key: "opus-4", label: "Claude Opus 4.8", color: "#E8554A", fallbackPrice: 0.000030 },
+  { key: "gemini", label: "Google Gemini 3.1 / 3.5", color: "#4285F4", fallbackPrice: 0.000025 },
+  { key: "deepseek", label: "DeepSeek V4", color: "#6366F1", fallbackPrice: 0.0000013 },
+  { key: "qwen", label: "Qwen 3.6 / 3.7", color: "#F59E0B", fallbackPrice: 0.0000008 },
+  { key: "glm", label: "GLM 5.2", color: "#8B5CF6", fallbackPrice: 0.0000015 },
+  { key: "minimax", label: "MiniMax M3", color: "#10B981", fallbackPrice: 0.0000015 }
+];
+
+const REFRESH_MS = 30 * 60 * 1000;
+let lastData = null, refreshTimer = null, allCatalogModels = [];
 
 function fm(x){var v=x*1e6;if(v===0)return"Free";return(v>=1)?"$"+v.toFixed(2):"$"+v.toFixed(4)}
 function fms(x){var v=x*1e6;if(v===0)return"Free";if(v>=1)return"$"+v.toFixed(2);if(v>=0.01)return"$"+v.toFixed(3);return"$"+v.toFixed(4)}
@@ -177,50 +166,61 @@ function fms(x){var v=x*1e6;if(v===0)return"Free";if(v>=1)return"$"+v.toFixed(2)
 function setStatus(text,type){var e=document.getElementById("status-text");e.className=type;e.innerHTML=text}
 function spin(on){var b=document.getElementById("refresh-btn");if(on)b.classList.add("spinning");else b.classList.remove("spinning")}
 
-function processModels(data){
-    var out=[];
-    for(var i=0;i<TRACKED.length;i++){
-        var tk=TRACKED[i];
-        var found=data.filter(function(d){return d.id===tk.id});
-        if(!found.length)continue;
-        var eps=[];
-        for(var j=0;j<found.length;j++){
-            var p=found[j].pricing;
-            if(p&&p.input!=null&&p.output!=null){
-                var nm=found[j].name||"";
-                var prov=nm.split("/")[0]||found[j].id;
-                eps.push({name:prov,i:parseFloat(p.input),o:parseFloat(p.output)});
-            }
+function processModels(apiModels){
+    let out = [];
+    allCatalogModels = apiModels.map(m => ({
+        id: m.id,
+        name: m.name || m.id,
+        i: parseFloat(m.pricing?.prompt || 0),
+        o: parseFloat(m.pricing?.completion || 0)
+    }));
+
+    for(let req of REQUESTED_MODELS){
+        let matches = apiModels.filter(m => m.id.toLowerCase().includes(req.key.toLowerCase()));
+        if(matches.length > 0){
+            let eps = matches.map(m => ({
+                name: m.id.split('/')[0],
+                i: parseFloat(m.pricing?.prompt || 0),
+                o: parseFloat(m.pricing?.completion || 0),
+                id: m.id
+            }));
+            eps = eps.filter((v,i,a) => a.findIndex(t => (t.name === v.name && Math.abs(t.i - v.i) < 1e-9 && Math.abs(t.o - v.o) < 1e-9)) === i);
+            eps.sort((a,b) => (a.i+a.o) - (b.i+b.o));
+            
+            let ci = eps.reduce((a,b) => b.i < a.i ? b : a);
+            let co = eps.reduce((a,b) => b.o < a.o ? b : a);
+            let mei = eps.reduce((a,b) => b.i > a.i ? b : a);
+            let meo = eps.reduce((a,b) => b.o > a.o ? b : a);
+            
+            out.push({
+                id: req.key, label: req.label, color: req.color, np: eps.length,
+                eps: eps, ci: ci, co: co, mei: mei, meo: meo,
+                cc: ci.i + co.o, cm: mei.i + meo.o, isFallback: false
+            });
+        } else {
+            let p = req.fallbackPrice / 2;
+            let eps = [{ name: "Estimé (Non trouvé sur OpenRouter)", i: p, o: p, id: req.key }];
+            out.push({
+                id: req.key, label: req.label + " (Estimé)", color: req.color, np: 1,
+                eps: eps, ci: {name:"Estimé",i:p}, co: {name:"Estimé",o:p},
+                mei: {name:"Estimé",i:p}, meo: {name:"Estimé",o:p},
+                cc: req.fallbackPrice, cm: req.fallbackPrice, isFallback: true
+            });
         }
-        if(!eps.length)continue;
-        eps.sort(function(a,b){return(a.i+a.o)-(b.i+b.o)});
-        var seen=new Set();var ue=[];
-        for(var j=0;j<eps.length;j++){
-            var k=eps[j].name+"-"+eps[j].i+"-"+eps[j].o;
-            if(!seen.has(k)){seen.add(k);ue.push(eps[j])}
-        }
-        var ci=ue.reduce(function(a,b){return b.i<a.i?b:a});
-        var co=ue.reduce(function(a,b){return b.o<a.o?b:a});
-        var mei=ue.reduce(function(a,b){return b.i>a.i?b:a});
-        var meo=ue.reduce(function(a,b){return b.o>a.o?b:a});
-        out.push({id:tk.id,label:tk.label,color:tk.color,ag:tk.ag||"",np:ue.length,
-            eps:ue,ci:ci,co:co,mei:mei,meo:meo,cc:ci.i+co.o,cm:mei.i+meo.o});
     }
     return out;
 }
 
 function renderCards(data){
-    var gd=document.getElementById("gd");
-    var lb=document.getElementById("loading-box");
-    gd.innerHTML="";lb.style.display="none";gd.style.display="";
-    var sorted=data.slice().sort(function(a,b){return a.cc-b.cc});
-    for(var i=0;i<sorted.length;i++){
-        var m=sorted[i];
-        var ir=m.ci.i>0?m.mei.i/m.ci.i:1;
-        var oo=m.co.o>0?m.meo.o/m.co.o:1;
-        var irs=ir.toFixed(1);var oos=oo.toFixed(1);
-        var c='<div class="cd" style="border-left-color:'+m.color+'" data-ct="'+m.cc+'" data-ci="'+m.ci.i+'" data-cm="'+m.cm+'">';
-        c+='<div class="ch"><div class="ct"><div class="d2" style="background:'+m.color+'"></div><h2>'+m.label+'</h2></div>';
+    let gd=document.getElementById("gd");
+    let lb=document.getElementById("loading-box");
+    gd.innerHTML=""; lb.style.display="none"; gd.style.display="";
+    let sorted=data.slice().sort((a,b)=>a.cc-b.cc);
+    for(let m of sorted){
+        let ir=m.ci.i>0?m.mei.i/m.ci.i:1;
+        let oo=m.co.o>0?m.meo.o/m.co.o:1;
+        let c='<div class="cd" style="border-left-color:'+m.color+'" data-ct="'+m.cc+'" data-ci="'+m.ci.i+'" data-cm="'+m.cm+'">';
+        c+='<div class="ch"><div class="ct"><div class="d2" style="background:'+m.color+'"></div><h2>'+m.label+(m.isFallback?' <span style="font-size:.6rem;color:#F59E0B">(Estimé)</span>':'')+'</h2></div>';
         c+='<span class="badge2">'+m.np+' provider'+(m.np>1?'s':'')+'</span></div>';
         c+='<div class="ps">';
         c+='<div class="pb"><h3>Moins cher / 1M</h3><div class="pr"><span class="pl">Input</span><span class="pv gc">'+fm(m.ci.i)+'</span></div>';
@@ -229,18 +229,16 @@ function renderCards(data){
         c+='<div class="pb"><h3>Plus cher / 1M</h3><div class="pr"><span class="pl">Input</span><span class="pv re">'+fm(m.mei.i)+'</span></div>';
         c+='<div class="pr"><span class="pl">Output</span><span class="pv re">'+fm(m.meo.o)+'</span></div>';
         c+='<div class="sub2">'+m.mei.name+' / '+m.meo.name+'</div></div>';
-        c+='<div class="pb"><h3>Combin\u00e9 in+out / 1M</h3><div class="pr"><span class="pl">Min</span><span class="pv gc">'+fm(m.cc)+'</span></div>';
+        c+='<div class="pb"><h3>Combiné in+out / 1M</h3><div class="pr"><span class="pl">Min</span><span class="pv gc">'+fm(m.cc)+'</span></div>';
         c+='<div class="pr"><span class="pl">Max</span><span class="pv re">'+fm(m.cm)+'</span></div>';
-        c+='<div class="sub2">\u00d7'+irs+' in / \u00d7'+oos+' out</div></div>';
-        c+='</div>';
-        if(m.ag)c+='<div class="ag"><div class="al2">Agentic</div><div class="at">'+m.ag+'</div></div>';
-        c+='<div class="sm2"><span>Spread: <b class="re">in '+irs+'x</b> out <b>'+oos+'x</b></span>';
-        c+='<span>Combin\u00e9/1M: <b class="gc">'+fm(m.cc)+'</b> \u2192 <b class="re">'+fm(m.cm)+'</b></span></div>';
+        c+='<div class="sub2">×'+ir.toFixed(1)+' in / ×'+oo.toFixed(1)+' out</div></div></div>';
+        c+='<div class="sm2"><span>Spread: <b class="re">in '+ir.toFixed(1)+'x</b> out <b>'+oo.toFixed(1)+'x</b></span>';
+        c+='<span>Combiné/1M: <b class="gc">'+fm(m.cc)+'</b> → <b class="re">'+fm(m.cm)+'</b></span></div>';
         c+='<button class="tg2" onclick="toggleProv(this)">Providers</button>';
-        c+='<table class="pt"><tr><th>Provider</th><th>Input</th><th>Output</th><th>Combin\u00e9</th></tr>';
-        for(var j=0;j<m.eps.length;j++){
-            var e=m.eps[j];var cv=e.i+e.o;
-            var ib=Math.abs(e.i-m.ci.i)<1e-9;
+        c+='<table class="pt"><tr><th>Provider</th><th>Input</th><th>Output</th><th>Combiné</th></tr>';
+        for(let e of m.eps){
+            let cv=e.i+e.o;
+            let ib=Math.abs(e.i-m.ci.i)<1e-9;
             c+='<tr'+(ib?' class="br"':'')+'><td>'+e.name+'</td>';
             c+='<td class="'+(ib?'gc':'nc')+'">'+fms(e.i)+'</td>';
             c+='<td class="'+(ib?'gc':'nc')+'">'+fms(e.o)+'</td>';
@@ -258,12 +256,12 @@ function toggleProv(btn){
 }
 
 function renderSession(data){
-    var t=document.getElementById("session-table");
-    var h='<tr><th>Mod\u00e8le</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr>';
-    for(var i=0;i<data.length;i++){
-        var m=data[i];var cc=m.cc;
-        var p100=(cc*100000).toFixed(4);
-        var u=cc<0.000003?"Budget":cc<0.000015?"Quotidien":cc<0.000035?"Premium":"Ultra-premium";
+    let t=document.getElementById("session-table");
+    let h='<tr><th>Modèle</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr>';
+    for(let m of data){
+        let cc=m.cc;
+        let p100=(cc*100000).toFixed(4);
+        let u=cc<0.000003?"Budget":cc<0.000015?"Quotidien":cc<0.000035?"Premium":"Ultra-premium";
         h+='<tr><td style="font-weight:600">'+m.label+'</td>';
         h+='<td style="font-family:JetBrains Mono,monospace;text-align:right;color:#10B981">$ '+p100+'</td>';
         h+='<td style="font-family:JetBrains Mono,monospace;text-align:right;color:#10B981">'+fm(cc)+'</td>';
@@ -272,52 +270,78 @@ function renderSession(data){
     t.innerHTML=h;
 }
 
+function renderCatalog(data){
+    let tbody=document.getElementById("catalog-body");
+    tbody.innerHTML="";
+    let sorted=data.slice().sort((a,b)=>(a.i+a.o)-(b.i+b.o));
+    for(let m of sorted){
+        let row=document.createElement("tr");
+        row.innerHTML='<td style="font-family:JetBrains Mono,monospace;font-size:.7rem">'+m.id+'</td>'+
+                      '<td>'+m.name+'</td>'+
+                      '<td style="color:#10B981">'+fms(m.i)+'</td>'+
+                      '<td style="color:#10B981">'+fms(m.o)+'</td>'+
+                      '<td><button class="copy-btn" onclick=\'copyId("'+m.id+'")\'>Copier ID</button></td>';
+        tbody.appendChild(row);
+    }
+}
+
+function filterCatalog(){
+    let q=document.getElementById("search-box").value.toLowerCase();
+    let rows=document.getElementById("catalog-body").querySelectorAll("tr");
+    for(let row of rows){
+        let text=row.textContent.toLowerCase();
+        row.style.display=text.includes(q)?"":"none";
+    }
+}
+
+function copyId(id){
+    navigator.clipboard.writeText(id).then(()=>{
+        alert("ID copié : " + id);
+    });
+}
+
 window.fetchPrices=function(){
-    spin(true);setStatus("\ud83d\udd04 R\u00e9cup\u00e9ration...","loading");
-    fetch("https://openrouter.ai/api/v1/models").then(function(r){return r.json()}).then(function(data){
-        var models=data.data||[];
-        var out=processModels(models);
-        if(!out.length){setStatus("\u26a0 Aucun mod\u00e8le trouv\u00e9","error-msg");return}
-        lastData=out;renderCards(out);
-        var now=new Date();var ts=now.toLocaleTimeString("fr-FR");
-        setStatus("\u2705 Mis \u00e0 jour \u00e0 "+ts+" ("+out.length+" mod\u00e8les)","live");
+    spin(true);setStatus("🔄 Récupération...","loading");
+    fetch("https://openrouter.ai/api/v1/models").then(r=>r.json()).then(data=>{
+        let models=data.data||[];
+        let res=processModels(models);
+        if(!res.length){setStatus("⚠ Aucun modèle trouvé","error-msg");return}
+        lastData=res;renderCards(res);renderCatalog(allCatalogModels);
+        let now=new Date();let ts=now.toLocaleTimeString("fr-FR");
+        setStatus("✅ Mis à jour à "+ts+" ("+res.length+" modèles ciblés)","live");
         spin(false);
         if(refreshTimer)clearTimeout(refreshTimer);
         refreshTimer=setTimeout(window.fetchPrices,REFRESH_MS);
-    }).catch(function(err){
+    }).catch(err=>{
         console.error(err);
-        if(lastData){setStatus("\u26a0 Erseau - derni\u00e8res donn\u00e9es","error-msg")}
-        else{setStatus("\u274c Impossible de charger les prix","error-msg")}
+        if(lastData){setStatus("⚠ Erseau - dernières données","error-msg")}
+        else{setStatus("❌ Impossible de charger les prix","error-msg")}
         spin(false);
     });
 };
 
-// Tab navigation
 document.getElementById("mn").addEventListener("click",function(e){
-    var t=e.target.getAttribute("data-t");
+    let t=e.target.getAttribute("data-t");
     if(t&&!e.target.classList.contains("ac")){
-        document.querySelectorAll("#mn button").forEach(function(b){b.classList.remove("ac")});
+        document.querySelectorAll("#mn button").forEach(b=>b.classList.remove("ac"));
         e.target.classList.add("ac");
-        document.querySelectorAll(".vp").forEach(function(v){v.classList.remove("on")});
+        document.querySelectorAll(".vp").forEach(v=>v.classList.remove("on"));
         document.getElementById("v-"+t).classList.add("on");
     }
 });
 
-// Sort
 document.getElementById("sb").addEventListener("click",function(e){
-    var s=e.target.getAttribute("data-s");
+    let s=e.target.getAttribute("data-s");
     if(s&&!e.target.classList.contains("so")){
-        document.querySelectorAll("#sb button").forEach(function(b){b.classList.remove("so")});
+        document.querySelectorAll("#sb button").forEach(b=>b.classList.remove("so"));
         e.target.classList.add("so");
-        var gd=document.getElementById("gd");
-        var cards=Array.prototype.slice.call(gd.querySelectorAll(".cd"));
-        cards.sort(function(a,b){return parseFloat(a.getAttribute("data-"+s))-parseFloat(b.getAttribute("data-"+s))});
-        cards.forEach(function(c){gd.appendChild(c)});
+        let gd=document.getElementById("gd");
+        let cards=Array.prototype.slice.call(gd.querySelectorAll(".cd"));
+        cards.sort((a,b)=>parseFloat(a.getAttribute("data-"+s))-parseFloat(b.getAttribute("data-"+s)));
+        cards.forEach(c=>gd.appendChild(c));
     }
 });
 
-// Initial fetch
 window.fetchPrices();
-
 </script>
 </body></html>
