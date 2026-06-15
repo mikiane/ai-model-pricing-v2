@@ -78,6 +78,21 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 .instructions{background:rgba(99,102,241,.1);border:1px solid #6366F1;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.8rem;color:#A1A1B5;line-height:1.5}
 .instructions b{color:#E4E4F0}
 .instructions code{background:#1E1E3A;padding:.1rem .3rem;border-radius:4px;font-family:'JetBrains Mono',monospace;color:#818CF8}
+.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);display:none;justify-content:center;align-items:center;z-index:1000}
+.modal-overlay.open{display:flex}
+.modal{background:#12122A;border:1px solid #1E1E3A;border-radius:12px;padding:1.5rem;width:90%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.modal h3{margin-bottom:1rem;color:#E4E4F0}
+.modal label{display:block;font-size:.75rem;color:#71718A;margin-bottom:.3rem;margin-top:.8rem}
+.modal input{width:100%;padding:.5rem;background:#0A0A1A;border:1px solid #2E2E4A;border-radius:6px;color:#E4E4F0;font-family:'JetBrains Mono',monospace;font-size:.85rem}
+.modal input:focus{outline:none;border-color:#6366F1}
+.modal-actions{display:flex;gap:.5rem;margin-top:1.5rem}
+.btn{flex:1;padding:.6rem;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:.85rem;transition:all .2s}
+.btn-primary{background:#6366F1;color:#fff}
+.btn-primary:hover{background:#4F46E5}
+.btn-secondary{background:#2E2E4A;color:#A1A1B5}
+.btn-secondary:hover{background:#3E3E5A}
+.export-box{margin-top:1rem;padding:1rem;background:#0A0A1A;border:1px dashed #2E2E4A;border-radius:8px;text-align:center}
+.export-box button{margin-top:.5rem;width:100%}
 </style></head>
 
 <body>
@@ -112,11 +127,10 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 <div class="oc2">
 <h3>Ajouter un modèle au tableau principal</h3>
 <div class="instructions">
-<b>Comment ajouter un modèle (sans toucher au code) ?</b><br>
-1. Trouve l'ID exact du modèle ci-dessous (ex: <code>anthropic/claude-sonnet-4.6</code>) et clique sur <b>"Copier ID"</b>.<br>
-2. Demande à l'assistant (ici même) : <br>
-<code>Ajoute le modèle [ID_COPIÉ] avec le nom "[Nom Affiché]"</code><br>
-3. L'assistant mettra à jour automatiquement la configuration et redéploiera l'app. C'est tout !
+<b>Interface d'ajout rapide</b><br>
+1. Clique sur <b>"➕ Ajouter au tableau"</b> à côté du modèle souhaité dans le catalogue ci-dessous.<br>
+2. Le modèle est immédiatement ajouté à <b>ton</b> affichage local (sauvegardé dans ton navigateur).<br>
+3. Une fois ta sélection terminée, clique sur <b>"📥 Exporter ma config"</b> en bas de page et envoie-moi le fichier généré ici. Je me chargerai du déploiement serveur.
 </div>
 <input type="text" id="search-box" placeholder="🔍 Rechercher un modèle dans le catalogue (ex: qwen, deepseek, gpt-5)..." oninput="filterCatalog()">
 <div style="max-height:600px;overflow-y:auto;border:1px solid #1E1E3A;border-radius:8px;background:#12122A">
@@ -125,10 +139,31 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 <tbody id="catalog-body"></tbody>
 </table>
 </div>
+<div class="export-box">
+  <p style="font-size:.75rem;color:#71718A;margin-bottom:.5rem">Tu as ajouté des modèles localement ? Exporte ta configuration pour déploiement.</p>
+  <button class="btn btn-primary" onclick="exportConfig()">📥 Exporter target-models.json</button>
+</div>
 </div></div>
+
+<div id="add-modal" class="modal-overlay">
+  <div class="modal">
+    <h3>Ajouter un modèle</h3>
+    <label>ID OpenRouter (ex: openai/gpt-4o)</label>
+    <input type="text" id="modal-id" readonly>
+    <label>Nom à afficher</label>
+    <input type="text" id="modal-label" placeholder="Ex: GPT-4 Omni">
+    <label>Couleur (hex)</label>
+    <input type="color" id="modal-color" value="#6366F1" style="height:40px;padding:.2rem;cursor:pointer">
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="confirmAddModel()">Ajouter</button>
+    </div>
+  </div>
+</div>
 
 <script>
 let TARGET_MODELS = [];
+let CUSTOM_MODELS = JSON.parse(localStorage.getItem('custom_pricing_models') || '[]');
 const REFRESH_MS = 30 * 60 * 1000;
 let lastData = null, refreshTimer = null, allCatalogModels = [];
 
@@ -136,12 +171,84 @@ async function loadConfig() {
     try {
         const res = await fetch('./target-models.json');
         if (!res.ok) throw new Error('Config non trouvée');
-        TARGET_MODELS = await res.json();
+        const defaultModels = await res.json();
+        // Merge default and custom, avoiding duplicates by ID
+        const ids = new Set();
+        TARGET_MODELS = [...defaultModels, ...CUSTOM_MODELS].filter(m => {
+            if (ids.has(m.id)) return false;
+            ids.add(m.id);
+            return true;
+        });
         window.fetchPrices();
     } catch (e) {
         console.error(e);
         setStatus("❌ Erreur de configuration (target-models.json manquant)", "error-msg");
     }
+}
+
+function openAddModal(id, name) {
+    document.getElementById('modal-id').value = id;
+    document.getElementById('modal-label').value = name;
+    document.getElementById('add-modal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('add-modal').classList.remove('open');
+}
+
+function confirmAddModel() {
+    const id = document.getElementById('modal-id').value.trim();
+    const label = document.getElementById('modal-label').value.trim();
+    const color = document.getElementById('modal-color').value;
+    
+    if (!id || !label) {
+        alert('ID et Nom sont requis');
+        return;
+    }
+    
+    // Remove if already exists in custom
+    CUSTOM_MODELS = CUSTOM_MODELS.filter(m => m.id !== id);
+    CUSTOM_MODELS.push({ id, label, color });
+    localStorage.setItem('custom_pricing_models', JSON.stringify(CUSTOM_MODELS));
+    
+    // Refresh display
+    const ids = new Set();
+    TARGET_MODELS = [...(lastData ? TARGET_MODELS.filter(m => !CUSTOM_MODELS.some(cm => cm.id === m.id)) : []), ...CUSTOM_MODELS].filter(m => {
+        // We need to reload from default + custom properly
+        return true; // Simplified, will be fixed by reload
+    });
+    
+    closeModal();
+    loadConfig(); // Reload to merge properly
+}
+
+function exportConfig() {
+    if (CUSTOM_MODELS.length === 0) {
+        alert('Aucun modèle personnalisé à exporter. Ajoute-en d\'abord depuis le catalogue.');
+        return;
+    }
+    
+    // Fetch current default config and merge with custom
+    fetch('./target-models.json').then(r => r.json()).then(defaults => {
+        const ids = new Set();
+        const merged = [...defaults, ...CUSTOM_MODELS].filter(m => {
+            if (ids.has(m.id)) return false;
+            ids.add(m.id);
+            return true;
+        });
+        
+        const blob = new Blob([JSON.stringify(merged, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'target-models.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        alert('Fichier téléchargé ! Envoie-le-moi ici sur Telegram et je le déploierai.');
+    });
 }
 
 function fm(x){var v=x*1e6;if(v===0)return"Free";return(v>=1)?"$"+v.toFixed(2):"$"+v.toFixed(4)}
@@ -228,7 +335,7 @@ function renderCatalog(data){
                       '<td>'+m.name+'</td>' +
                       '<td style="color:#10B981">'+fms(m.i)+'</td>' +
                       '<td style="color:#10B981">'+fms(m.o)+'</td>' +
-                      '<td><button class="copy-btn" onclick="copyId(\''+m.id+'\')">Copier ID</button></td>';
+                      '<td><button class="copy-btn" style="background:#10B981;color:#fff;margin-right:.3rem" onclick="openAddModal(\''+m.id+'\', \''+m.name.replace(/'/g, "\\'")+'\')">➕ Ajouter</button><button class="copy-btn" onclick="copyId(\''+m.id+'\')">Copier</button></td>';
         tbody.appendChild(row);
     }
 }
@@ -242,18 +349,13 @@ function filterCatalog(){
     }
 }
 
-function copyId(id){
+function copyId(id, btnElement){
     navigator.clipboard.writeText(id).then(()=>{
-        // Petit feedback visuel temporaire sur le bouton serait top, mais alert simple pour l'instant
-        let btn = event.target;
-        let original = btn.textContent;
-        btn.textContent = "Copié !";
-        btn.style.background = "#10B981";
-        btn.style.color = "#fff";
+        if (!btnElement) btnElement = event.target;
+        let original = btnElement.textContent;
+        btnElement.textContent = "Copié !";
         setTimeout(() => {
-            btn.textContent = original;
-            btn.style.background = "";
-            btn.style.color = "";
+            btnElement.textContent = original;
         }, 1500);
     });
 }
