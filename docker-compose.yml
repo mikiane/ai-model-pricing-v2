@@ -1,0 +1,14 @@
+services:
+  pricing-v2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pricingv2.rule=Host(`pricing-v2.staging.myapp.technology`)"
+      - "traefik.http.routers.pricingv2.entrypoints=https"
+      - "traefik.http.routers.pricingv2.tls=true"
+      - "traefik.http.routers.pricingv2.tls.certresolver=letsencrypt"
+      - "traefik.http.services.pricingv2.loadbalancer.server.port=80"
