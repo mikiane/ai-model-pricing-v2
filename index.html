@@ -116,11 +116,46 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 <div id="gd" class="gd" style="display:none"></div>
 </div>
 
-<div id="v-openclaw" class="vp"><div class="oc2"><h3>Recommandations pour OpenClaw</h3>
-<div class="rc" style="border-left-color:#E8554A"><h4 style="color:#E8554A">Codage pur — meilleur résultat</h4><p>Claude Opus 4.8 : #1 SWE-bench Pro, meilleur tool invocation. Choix premium pour Codex, refactoring, features.</p><div class="rp">Combined ~$30/M</div><div><span class="tag tgb">Best perf</span></div></div>
-<div class="rc" style="border-left-color:#20C997"><h4 style="color:#20C997">CLI + Shell</h4><p>OpenAI GPT-5.5 : Terminal-Bench 82.7% (meilleur), Expert-SWE 73.1%. Shell, debug.</p><div class="rp">Combined ~$35/M</div><div><span class="tag tgb">Terminal #1</span></div></div>
-<div class="rc" style="border-left-color:#10B981"><h4 style="color:#10B981">Budget — prix agentique</h4><p>MiniMax M3 / DeepSeek V4 Pro : ~72.5% SWE-Ver à prix imbattable. Coding autonome.</p><div class="rp">Combined ~$1.50/M</div><div><span class="tag tgv">Cheap agentic</span></div></div>
-<div class="ost"><p><b>Stratégie :</b><br>• <b>Default</b> : Sonnet 4.6<br>• <b>Complexe</b> : Opus 4.8<br>• <b>Fallback</b> : GPT-5.5<br>• <b>Budget</b> : MiniMax / DeepSeek</p></div>
+<div id="v-openclaw" class="vp">
+<div class="oc2">
+<h3>Scénarios de routage recommandés pour OpenClaw</h3>
+<p style="font-size:.78rem;color:#71718A;margin-bottom:1rem">Optimisez vos coûts et performances en assignant le bon modèle à la bonne tâche, comme le fait un moteur de routage intelligent.</p>
+
+<div class="rc" style="border-left-color:#E8554A">
+  <h4 style="color:#E8554A">🧠 Raisonnement complexe & Architecture</h4>
+  <p><b>Claude Opus 4.8</b> : Meilleure compréhension contextuelle, planification multi-étapes et tool invocation fiable. Idéal pour concevoir une feature ou refactorer un module entier.</p>
+  <div class="rp">Coût combiné : ~$30 / 1M tokens</div>
+  <div><span class="tag tgb">Best perf</span> <span class="tag tgv">SWE-Pro #1</span></div>
+</div>
+
+<div class="rc" style="border-left-color:#20C997">
+  <h4 style="color:#20C997">💻 Codage, CLI & Debug Shell</h4>
+  <p><b>OpenAI GPT-5.5</b> : Score Terminal-Bench 82.7%. Excellence en génération de code, exécution de commandes shell et débogage d'erreurs d'exécution.</p>
+  <div class="rp">Coût combiné : ~$35 / 1M tokens</div>
+  <div><span class="tag tgb">Terminal #1</span> <span class="tag tgv">Expert-SWE 73%</span></div>
+</div>
+
+<div class="rc" style="border-left-color:#4285F4">
+  <h4 style="color:#4285F4">🔍 Recherche Web & Analyse de Documents (RAG)</h4>
+  <p><b>Google Gemini 3.5 Flash</b> : Fenêtre de contexte massive, traitement rapide de longs documents et excellent rapport qualité/prix pour l'extraction d'informations.</p>
+  <div class="rp">Coût combiné : ~$10.50 / 1M tokens</div>
+  <div><span class="tag tgv">Fast & Large Context</span></div>
+</div>
+
+<div class="rc" style="border-left-color:#10B981">
+  <h4 style="color:#10B981">⚡ Tâches de routine, Background & Boucles d'agents</h4>
+  <p><b>Qwen 3.6 Plus / DeepSeek V4 Flash / MiniMax M3</b> : Coût imbattable pour les tâches répétitives, la classification, les résumés ou les agents qui tournent en boucle avec de nombreux appels d'outils.</p>
+  <div class="rp">Coût combiné : ~$1.50 à $3.00 / 1M tokens</div>
+  <div><span class="tag tgv">Cheap agentic</span> <span class="tag tgf">High volume</span></div>
+</div>
+
+<div class="ost">
+  <p><b>🎯 Stratégie de routing par défaut :</b><br>
+  • <b>Tâche principale / Créative</b> → Opus 4.8<br>
+  • <b>Exécution technique / Shell</b> → GPT-5.5<br>
+  • <b>Lecture de contexte long / RAG</b> → Gemini 3.5 Flash<br>
+  • <b>Tâches de fond / Vérifications</b> → Qwen 3.6 Plus ou DeepSeek V4 Flash</p>
+</div>
 </div></div>
 
 <div id="v-catalog" class="vp">
