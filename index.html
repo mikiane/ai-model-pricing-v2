@@ -112,12 +112,11 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 <div class="oc2">
 <h3>Ajouter un modèle au tableau principal</h3>
 <div class="instructions">
-<b>Comment ajouter un modèle ?</b><br>
-1. Utilise la barre de recherche ci-dessous pour trouver le modèle dans le catalogue OpenRouter.<br>
-2. Clique sur <b>"Copier ID"</b> à côté du modèle souhaité (ex: <code>anthropic/claude-sonnet-4.6</code>).<br>
-3. Ouvre le fichier <code>index.html</code> de ce projet, repère le tableau <code>TARGET_MODELS</code> en bas, et ajoute une ligne :<br>
-<code>{ id: "l/id/copié", label: "Nom Affiché", color: "#6366F1" },</code><br>
-4. Sauvegarde, commit et push. Le modèle apparaîtra alors avec son prix exact, sans variant.
+<b>Comment ajouter un modèle (sans toucher au code) ?</b><br>
+1. Trouve l'ID exact du modèle ci-dessous (ex: <code>anthropic/claude-sonnet-4.6</code>) et clique sur <b>"Copier ID"</b>.<br>
+2. Demande à l'assistant (ici même) : <br>
+<code>Ajoute le modèle [ID_COPIÉ] avec le nom "[Nom Affiché]"</code><br>
+3. L'assistant mettra à jour automatiquement la configuration et redéploiera l'app. C'est tout !
 </div>
 <input type="text" id="search-box" placeholder="🔍 Rechercher un modèle dans le catalogue (ex: qwen, deepseek, gpt-5)..." oninput="filterCatalog()">
 <div style="max-height:600px;overflow-y:auto;border:1px solid #1E1E3A;border-radius:8px;background:#12122A">
@@ -129,21 +128,21 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 </div></div>
 
 <script>
-// Liste explicite des modèles à afficher. Un modèle = une ligne = un ID exact OpenRouter.
-// Pas de regroupement de variants. Si l'ID n'est pas trouvé, il est marqué "Introuvable".
-const TARGET_MODELS = [
-  { id: "openai/gpt-5.5", label: "OpenAI GPT-5.5", color: "#20C997" },
-  { id: "anthropic/claude-opus-4.8", label: "Claude Opus 4.8", color: "#E8554A" },
-  { id: "google/gemini-3.5-flash", label: "Google Gemini 3.5 Flash", color: "#4285F4" },
-  { id: "deepseek/deepseek-v4-pro", label: "DeepSeek V4 Pro", color: "#6366F1" },
-  { id: "qwen/qwen3.6-max-preview", label: "Qwen 3.6 Max", color: "#F59E0B" },
-  { id: "qwen/qwen3.7-plus", label: "Qwen 3.7 Plus", color: "#EAB308" },
-  { id: "z-ai/glm-5.1", label: "GLM 5.1 (5.2 non dispo)", color: "#8B5CF6" },
-  { id: "minimax/minimax-m3", label: "MiniMax M3", color: "#10B981" }
-];
-
+let TARGET_MODELS = [];
 const REFRESH_MS = 30 * 60 * 1000;
 let lastData = null, refreshTimer = null, allCatalogModels = [];
+
+async function loadConfig() {
+    try {
+        const res = await fetch('./target-models.json');
+        if (!res.ok) throw new Error('Config non trouvée');
+        TARGET_MODELS = await res.json();
+        window.fetchPrices();
+    } catch (e) {
+        console.error(e);
+        setStatus("❌ Erreur de configuration (target-models.json manquant)", "error-msg");
+    }
+}
 
 function fm(x){var v=x*1e6;if(v===0)return"Free";return(v>=1)?"$"+v.toFixed(2):"$"+v.toFixed(4)}
 function fms(x){var v=x*1e6;if(v===0)return"Free";if(v>=1)return"$"+v.toFixed(2);if(v>=0.01)return"$"+v.toFixed(3);return"$"+v.toFixed(4)}
@@ -290,6 +289,6 @@ document.getElementById("mn").addEventListener("click",function(e){
     }
 });
 
-window.fetchPrices();
+loadConfig();
 </script>
 </body></html>
