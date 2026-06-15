@@ -18,7 +18,7 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 .vp{display:none}.vp.on{display:block}
 .legend{display:flex;justify-content:center;gap:1.5rem;margin:.8rem 0 1rem;flex-wrap:wrap;font-size:.72rem;color:#71718A}
 .dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:4px}
-.status-bar{text-align:center;margin-bottom:1rem;padding:.4rem .8rem;border-radius:8px;font-size:.72rem;background:#1612A;border:1px solid #1E1E3A;display:flex;justify-content:center;align-items:center;gap:.5rem}
+.status-bar{text-align:center;margin-bottom:1rem;padding:.4rem .8rem;border-radius:8px;font-size:.72rem;background:#16162D;border:1px solid #1E1E3A;display:flex;justify-content:center;align-items:center;gap:.5rem}
 .status-bar .live{color:#10B981;font-weight:600}
 .status-bar .loading{color:#F59E0B;font-weight:600}
 .status-bar .error-msg{color:#EF4444;font-weight:600}
@@ -47,17 +47,7 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 .pv{font-family:'JetBrains Mono',monospace;font-size:.82rem;font-weight:500}
 .gc{color:#10B981}.re{color:#EF4444}.nc{color:#D4D4E8}
 .sub2{font-size:.62rem;color:#52526B;margin-top:.3rem}
-.ag{padding-top:.55rem;border-top:1px solid #1E1E3A;margin-top:.6rem}
-.al2{font-size:.52rem;text-transform:uppercase;letter-spacing:.1em;color:#52526B;margin-bottom:.2rem}
-.at{font-size:.75rem;color:#A1A1B5;line-height:1.4}
 .sm2{display:flex;justify-content:space-between;align-items:center;padding-top:.55rem;border-top:1px solid #1E1E3A;margin-top:.6rem;flex-wrap:wrap;gap:.3rem;font-size:.68rem}
-.tg2{margin-top:.5rem;font-size:.65rem;color:#6366F1;cursor:pointer;background:none;border:none;font-family:inherit;text-decoration:underline}
-.pt{display:none;margin-top:.5rem;width:100%;font-size:.65rem;border-collapse:collapse}
-.pt.po{display:table}
-.pt th{text-align:left;padding:.25rem;color:#71718A;border-bottom:1px solid #1E1E3A;font-weight:500}
-.pt td{padding:.25rem;color:#A1A1B5;border-bottom:1px solid rgba(30,30,58,.4);font-family:'JetBrains Mono',monospace}
-.pt td:first-child{font-family:'Inter',sans-serif}
-.pt .br{background:rgba(16,185,129,.08)}
 .bt{width:100%;max-width:1100px;margin:0 auto;border-collapse:collapse;font-size:.78rem}
 .bt th{padding:.55rem .4rem;text-align:left;color:#71718A;border-bottom:2px solid #1E1E3A;font-weight:600;font-size:.65rem;text-transform:uppercase;letter-spacing:.04em}
 .bt td{padding:.5rem .4rem;border-bottom:1px solid rgba(30,30,58,.5)}
@@ -85,19 +75,21 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 .catalog-table td{padding:.4rem .5rem;border-bottom:1px solid rgba(30,30,58,.5)}
 .copy-btn{background:#2E2E4A;color:#A1A1B5;border:none;padding:.2rem .5rem;border-radius:4px;cursor:pointer;font-size:.65rem}
 .copy-btn:hover{background:#6366F1;color:#fff}
+.instructions{background:rgba(99,102,241,.1);border:1px solid #6366F1;border-radius:8px;padding:1rem;margin-bottom:1rem;font-size:.8rem;color:#A1A1B5;line-height:1.5}
+.instructions b{color:#E4E4F0}
+.instructions code{background:#1E1E3A;padding:.1rem .3rem;border-radius:4px;font-family:'JetBrains Mono',monospace;color:#818CF8}
 </style></head>
 
 <body>
 <div class="hd">
 <h1>AI Model Pricing V2 — Live Data</h1>
-<p>Prix temps réel depuis <a href="https://openrouter.ai" target="_blank">OpenRouter</a> + Benchmarks agentic</p>
+<p>Prix temps réel depuis <a href="https://openrouter.ai" target="_blank">OpenRouter</a></p>
 <div class="live-badge">⚡ Auto-refresh toutes les 30 min | Source: OpenRouter API</div>
 </div>
 <div id="mn">
   <button class="ac" data-t="pricing">Pricing Ciblé</button>
-  <button data-t="benchmarks">Benchmark</button>
   <button data-t="openclaw">OpenClaw</button>
-  <button data-t="catalog">Catalogue OpenRouter</button>
+  <button data-t="catalog">Catalogue & Ajout</button>
 </div>
 <div id="status-bar" class="status-bar">
 <span class="loading" id="status-text">🔄 Chargement des prix...</span>
@@ -105,56 +97,49 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 </div>
 
 <div id="v-pricing" class="vp on">
-<div class="legend"><span><span class="dot" style="background:#10B981"></span> Moins cher</span><span><span class="dot" style="background:#EF4444"></span> Plus cher</span></div>
-<div id="sb"><button class="so" data-s="ct">Coût total min</button><button data-s="ci">Input min</button><button data-s="cm">Coût total max</button></div>
 <div id="loading-box"><div class="placeholder">Chargement des données OpenRouter...</div></div>
 <div id="gd" class="gd" style="display:none"></div>
 </div>
 
-<div id="v-benchmarks" class="vp">
-<div class="legend"><span class="bst" style="font-weight:600">★ Top</span><span class="bgd">Bon</span><span class="bmd">Moyen</span><span class="bna">N/A</span></div>
-<div style="max-width:1100px;margin:0 auto;overflow-x:auto"><table class="bt">
-<tr><th style="min-width:160px">Modèle</th><th title="SWE-bench Verified">SWE-Ver</th><th title="SWE-bench Pro">SWE Pro</th><th title="MCP-Atlas">MCP</th><th title="Terminal-Bench">Term</th><th title="Finance Agent">Fin</th><th title="Arena Coding">Coding</th><th>Notes</th></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#20C997"></div>OpenAI GPT-5.5</div></td><td><div class="bgd" style="text-align:center">82.6%</div><div class="ba"><div class="bf" style="width:94.2%;background:#20C997"></div></div></td><td><div class="bgd" style="text-align:center">58.6%</div><div class="ba"><div class="bf" style="width:91.1%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">82.7%</div><div class="ba"><div class="bf" style="width:100%;background:#20C997"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">1520</div><div class="ba"><div class="bf" style="width:95.0%;background:#20C997"></div></div></td><td style="font-size:.7rem;color:#71718A;max-width:160px">Terminal-Bench 82.7%, Expert-SWE 73.1%</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#E8554A"></div>Claude Opus 4.8</div></td><td><div class="bst" style="text-align:center">87.6%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">64.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">77.3%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td class="bna" style="text-align:center">—</td><td><div class="bst" style="text-align:center">64.4%</div><div class="ba"><div class="bf" style="width:100%;background:#E8554A"></div></div></td><td><div class="bst" style="text-align:center">1548</div><div class="ba"><div class="bf" style="width:96.7%;background:#E8554A"></div></div></td><td style="font-size:.7rem;color:#71718A;max-width:160px">#1 SWE-Pro, MCP-Atlas 77.3%</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#4285F4"></div>Google Gemini 3.5</div></td><td><div class="bgd" style="text-align:center">80.1%</div><div class="ba"><div class="bf" style="width:91.4%;background:#4285F4"></div></div></td><td><div class="bgd" style="text-align:center">55.2%</div><div class="ba"><div class="bf" style="width:86%;background:#4285F4"></div></div></td><td><div class="bgd" style="text-align:center">74.5%</div><div class="ba"><div class="bf" style="width:96.5%;background:#4285F4"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">1480</div><div class="ba"><div class="bf" style="width:92.5%;background:#4285F4"></div></div></td><td style="font-size:.7rem;color:#71718A;max-width:160px">Excellent rapport perf/prix multimodal</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#6366F1"></div>DeepSeek V4</div></td><td><div class="bmd" style="text-align:center">~66%</div><div class="ba"><div class="bf" style="width:75.3%;background:#6366F1"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">~66% SWE-Ver à prix plancher</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#F59E0B"></div>Qwen 3.6 / 3.7</div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">Hybrid attn + MoE, 1M ctx</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#8B5CF6"></div>GLM 5 / 5.1</div></td><td class="bna" style="text-align:center">—</td><td><div class="bgd" style="text-align:center">58.4%</div><div class="ba"><div class="bf" style="width:90.8%;background:#8B5CF6"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">SWE-Pro 58.4% (5.2 n'existe pas encore)</td></tr>
-<tr><td><div class="mc2"><div class="d3" style="background:#10B981"></div>MiniMax M3</div></td><td><div class="bgd" style="text-align:center">~72.5%</div><div class="ba"><div class="bf" style="width:82.7%;background:#10B981"></div></div></td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td class="bna" style="text-align:center">—</td><td style="font-size:.7rem;color:#71718A;max-width:160px">Autonomous productivity, 192K ctx</td></tr>
-</table></div></div>
-
 <div id="v-openclaw" class="vp"><div class="oc2"><h3>Recommandations pour OpenClaw</h3>
 <div class="rc" style="border-left-color:#E8554A"><h4 style="color:#E8554A">Codage pur — meilleur résultat</h4><p>Claude Opus 4.8 : #1 SWE-bench Pro, meilleur tool invocation. Choix premium pour Codex, refactoring, features.</p><div class="rp">Combined ~$30/M</div><div><span class="tag tgb">Best perf</span></div></div>
 <div class="rc" style="border-left-color:#20C997"><h4 style="color:#20C997">CLI + Shell</h4><p>OpenAI GPT-5.5 : Terminal-Bench 82.7% (meilleur), Expert-SWE 73.1%. Shell, debug.</p><div class="rp">Combined ~$35/M</div><div><span class="tag tgb">Terminal #1</span></div></div>
-<div class="rc" style="border-left-color:#10B981"><h4 style="color:#10B981">Budget — prix agentique</h4><p>MiniMax M3 / DeepSeek V4 : ~72.5% SWE-Ver à prix imbattable. Coding autonome.</p><div class="rp">Combined ~$1.50/M</div><div><span class="tag tgv">Cheap agentic</span><span class="tag tgf">72.5% SWE</span></div></div>
-<div style="margin-top:1.5rem"><h4 style="font-size:.85rem;margin-bottom:.5rem;color:#71718A;">Coût par session OpenClaw (50K in + 50K out = 100K) — <em>auto-refresh</em></h4>
-<table id="session-table" class="bt"><tr><th>Modèle</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr></table></div>
+<div class="rc" style="border-left-color:#10B981"><h4 style="color:#10B981">Budget — prix agentique</h4><p>MiniMax M3 / DeepSeek V4 Pro : ~72.5% SWE-Ver à prix imbattable. Coding autonome.</p><div class="rp">Combined ~$1.50/M</div><div><span class="tag tgv">Cheap agentic</span></div></div>
 <div class="ost"><p><b>Stratégie :</b><br>• <b>Default</b> : Sonnet 4.6<br>• <b>Complexe</b> : Opus 4.8<br>• <b>Fallback</b> : GPT-5.5<br>• <b>Budget</b> : MiniMax / DeepSeek</p></div>
 </div></div>
 
 <div id="v-catalog" class="vp">
 <div class="oc2">
-<h3>Catalogue complet OpenRouter (Base d'enrichissement)</h3>
-<p style="font-size:.78rem;color:#71718A;margin-bottom:1rem">Recherchez un modèle, copiez son ID exact et ajoutez-le à la liste ciblée. Tous les modèles disponibles sur l'API OpenRouter sont listés ici.</p>
-<input type="text" id="search-box" placeholder="🔍 Rechercher un modèle (ex: qwen, deepseek, gpt-5)..." oninput="filterCatalog()">
+<h3>Ajouter un modèle au tableau principal</h3>
+<div class="instructions">
+<b>Comment ajouter un modèle ?</b><br>
+1. Utilise la barre de recherche ci-dessous pour trouver le modèle dans le catalogue OpenRouter.<br>
+2. Clique sur <b>"Copier ID"</b> à côté du modèle souhaité (ex: <code>anthropic/claude-sonnet-4.6</code>).<br>
+3. Ouvre le fichier <code>index.html</code> de ce projet, repère le tableau <code>TARGET_MODELS</code> en bas, et ajoute une ligne :<br>
+<code>{ id: "l/id/copié", label: "Nom Affiché", color: "#6366F1" },</code><br>
+4. Sauvegarde, commit et push. Le modèle apparaîtra alors avec son prix exact, sans variant.
+</div>
+<input type="text" id="search-box" placeholder="🔍 Rechercher un modèle dans le catalogue (ex: qwen, deepseek, gpt-5)..." oninput="filterCatalog()">
 <div style="max-height:600px;overflow-y:auto;border:1px solid #1E1E3A;border-radius:8px;background:#12122A">
 <table class="catalog-table" id="catalog-table">
-<tr><th>ID du Modèle</th><th>Nom</th><th>Input / 1M</th><th>Output / 1M</th><th>Action</th></tr>
+<tr><th>ID du Modèle (à copier)</th><th>Nom</th><th>Input / 1M</th><th>Output / 1M</th><th>Action</th></tr>
 <tbody id="catalog-body"></tbody>
 </table>
 </div>
 </div></div>
 
 <script>
-const REQUESTED_MODELS = [
-  { label: "OpenAI GPT-5.5", color: "#20C997", search: ["openai/gpt-5.5"] },
-  { label: "Claude Opus 4.8", color: "#E8554A", search: ["anthropic/claude-opus-4.8"] },
-  { label: "Google Gemini 3.1 / 3.5", color: "#4285F4", search: ["google/gemini-3.5", "google/gemini-3.1"] },
-  { label: "DeepSeek V4", color: "#6366F1", search: ["deepseek/deepseek-v4"] },
-  { label: "Qwen 3.6 / 3.7", color: "#F59E0B", search: ["qwen/qwen3.7", "qwen/qwen3.6"] },
-  { label: "GLM 5 / 5.1 (5.2 non dispo)", color: "#8B5CF6", search: ["z-ai/glm-5.1", "z-ai/glm-5"] },
-  { label: "MiniMax M3", color: "#10B981", search: ["minimax/minimax-m3"] }
+// Liste explicite des modèles à afficher. Un modèle = une ligne = un ID exact OpenRouter.
+// Pas de regroupement de variants. Si l'ID n'est pas trouvé, il est marqué "Introuvable".
+const TARGET_MODELS = [
+  { id: "openai/gpt-5.5", label: "OpenAI GPT-5.5", color: "#20C997" },
+  { id: "anthropic/claude-opus-4.8", label: "Claude Opus 4.8", color: "#E8554A" },
+  { id: "google/gemini-3.5-flash", label: "Google Gemini 3.5 Flash", color: "#4285F4" },
+  { id: "deepseek/deepseek-v4-pro", label: "DeepSeek V4 Pro", color: "#6366F1" },
+  { id: "qwen/qwen3.6-max-preview", label: "Qwen 3.6 Max", color: "#F59E0B" },
+  { id: "qwen/qwen3.7-plus", label: "Qwen 3.7 Plus", color: "#EAB308" },
+  { id: "z-ai/glm-5.1", label: "GLM 5.1 (5.2 non dispo)", color: "#8B5CF6" },
+  { id: "minimax/minimax-m3", label: "MiniMax M3", color: "#10B981" }
 ];
 
 const REFRESH_MS = 30 * 60 * 1000;
@@ -175,37 +160,27 @@ function processModels(apiModels){
         o: parseFloat(m.pricing?.completion || 0)
     }));
 
-    for(let req of REQUESTED_MODELS){
-        // Match exact ou partiel sur les IDs recherchés
-        let matches = apiModels.filter(m => req.search.some(term => m.id.toLowerCase().includes(term.toLowerCase())));
-        
-        if(matches.length > 0){
-            let eps = matches.map(m => ({
-                name: m.id,
-                i: parseFloat(m.pricing?.prompt || 0),
-                o: parseFloat(m.pricing?.completion || 0),
-                id: m.id
-            }));
-            // Dédupliquer par nom et prix
-            eps = eps.filter((v,i,a) => a.findIndex(t => (t.name === v.name && Math.abs(t.i - v.i) < 1e-9 && Math.abs(t.o - v.o) < 1e-9)) === i);
-            eps.sort((a,b) => (a.i+a.o) - (b.i+b.o));
-            
-            let ci = eps.reduce((a,b) => b.i < a.i ? b : a);
-            let co = eps.reduce((a,b) => b.o < a.o ? b : a);
-            let mei = eps.reduce((a,b) => b.i > a.i ? b : a);
-            let meo = eps.reduce((a,b) => b.o > a.o ? b : a);
-            
+    for (let target of TARGET_MODELS) {
+        let match = apiModels.find(m => m.id === target.id);
+        if (match) {
+            let i = parseFloat(match.pricing?.prompt || 0);
+            let o = parseFloat(match.pricing?.completion || 0);
             out.push({
-                id: req.search[0], label: req.label, color: req.color, np: eps.length,
-                eps: eps, ci: ci, co: co, mei: mei, meo: meo,
-                cc: ci.i + co.o, cm: mei.i + meo.o, isFallback: false
+                id: target.id,
+                label: target.label,
+                color: target.color,
+                i: i,
+                o: o,
+                cc: i + o,
+                found: true
             });
         } else {
-            // Fallback explicite si vraiment rien n'est trouvé
             out.push({
-                id: req.search[0], label: req.label + " (Introuvable)", color: req.color, np: 0,
-                eps: [], ci: {name:"N/A",i:0}, co: {name:"N/A",o:0}, mei: {name:"N/A",i:0}, meo: {name:"N/A",o:0},
-                cc: 0, cm: 0, isFallback: true
+                id: target.id,
+                label: target.label + " (Introuvable)",
+                color: target.color,
+                i: 0, o: 0, cc: 0,
+                found: false
             });
         }
     }
@@ -216,61 +191,32 @@ function renderCards(data){
     let gd=document.getElementById("gd");
     let lb=document.getElementById("loading-box");
     gd.innerHTML=""; lb.style.display="none"; gd.style.display="";
-    let sorted=data.slice().sort((a,b)=>a.cc-b.cc);
-    for(let m of sorted){
-        if(m.np === 0) continue; // Skip if not found
-        let ir=m.ci.i>0?m.mei.i/m.ci.i:1;
-        let oo=m.co.o>0?m.meo.o/m.co.o:1;
-        let c='<div class="cd" style="border-left-color:'+m.color+'" data-ct="'+m.cc+'" data-ci="'+m.ci.i+'" data-cm="'+m.cm+'">';
-        c+='<div class="ch"><div class="ct"><div class="d2" style="background:'+m.color+'"></div><h2>'+m.label+'</h2></div>';
-        c+='<span class="badge2">'+m.np+' variant'+(m.np>1?'s':'')+' trouvé'+(m.np>1?'s':'')+'</span></div>';
-        c+='<div class="ps">';
-        c+='<div class="pb"><h3>Moins cher / 1M</h3><div class="pr"><span class="pl">Input</span><span class="pv gc">'+fm(m.ci.i)+'</span></div>';
-        c+='<div class="pr"><span class="pl">Output</span><span class="pv gc">'+fm(m.co.o)+'</span></div>';
-        c+='<div class="sub2" style="font-size:.55rem;word-break:break-all">'+m.ci.name+'</div></div>';
-        c+='<div class="pb"><h3>Plus cher / 1M</h3><div class="pr"><span class="pl">Input</span><span class="pv re">'+fm(m.mei.i)+'</span></div>';
-        c+='<div class="pr"><span class="pl">Output</span><span class="pv re">'+fm(m.meo.o)+'</span></div>';
-        c+='<div class="sub2" style="font-size:.55rem;word-break:break-all">'+m.mei.name+'</div></div>';
-        c+='<div class="pb"><h3>Combiné in+out / 1M</h3><div class="pr"><span class="pl">Min</span><span class="pv gc">'+fm(m.cc)+'</span></div>';
-        c+='<div class="pr"><span class="pl">Max</span><span class="pv re">'+fm(m.cm)+'</span></div>';
-        c+='<div class="sub2">×'+ir.toFixed(1)+' in / ×'+oo.toFixed(1)+' out</div></div></div>';
-        c+='<div class="sm2"><span>Spread: <b class="re">in '+ir.toFixed(1)+'x</b> out <b>'+oo.toFixed(1)+'x</b></span>';
-        c+='<span>Combiné/1M: <b class="gc">'+fm(m.cc)+'</b> → <b class="re">'+fm(m.cm)+'</b></span></div>';
-        c+='<button class="tg2" onclick="toggleProv(this)">Détails variants</button>';
-        c+='<table class="pt"><tr><th>ID exact OpenRouter</th><th>Input</th><th>Output</th><th>Combiné</th></tr>';
-        for(let e of m.eps.slice(0,5)){ // Max 5 variants pour ne pas surcharger
-            let cv=e.i+e.o;
-            let ib=Math.abs(e.i-m.ci.i)<1e-9;
-            c+='<tr'+(ib?' class="br"':'')+'><td style="font-size:.6rem">'+e.name+'</td>';
-            c+='<td class="'+(ib?'gc':'nc')+'">'+fms(e.i)+'</td>';
-            c+='<td class="'+(ib?'gc':'nc')+'">'+fms(e.o)+'</td>';
-            c+='<td class="'+(ib?'gc':'nc')+'">'+fms(cv)+'</td></tr>';
+    
+    let sorted = data.slice().sort((a, b) => {
+        if (!a.found && !b.found) return 0;
+        if (!a.found) return 1;
+        if (!b.found) return -1;
+        return a.cc - b.cc;
+    });
+
+    for (let m of sorted) {
+        let c = '<div class="cd" style="border-left-color:' + m.color + '" data-ct="' + m.cc + '">';
+        c += '<div class="ch"><div class="ct"><div class="d2" style="background:' + m.color + '"></div><h2>' + m.label + '</h2></div>';
+        if (!m.found) {
+            c += '<span class="badge2" style="background:rgba(239,68,68,.15);color:#EF4444">ID introuvable</span></div>';
+            c += '<div class="ps"><div class="pb" style="grid-column:span 3;text-align:center;color:#EF4444;font-size:.8rem">Cet ID exact n\'existe pas sur OpenRouter. Vérifie le catalogue pour corriger l\'ID dans le code.</div></div>';
+        } else {
+            c += '<span class="badge2" style="font-family:JetBrains Mono,monospace;font-size:.6rem">' + m.id + '</span></div>';
+            c += '<div class="ps">';
+            c += '<div class="pb"><h3>Input / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.i)+'</span></div></div>';
+            c += '<div class="pb"><h3>Output / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.o)+'</span></div></div>';
+            c += '<div class="pb"><h3>Combiné / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.cc)+'</span></div></div>';
+            c += '</div>';
+            c += '<div class="sm2" style="justify-content:center"><span>Coût session 100K (50K in + 50K out) : <b class="gc">$' + (m.cc * 100000).toFixed(4) + '</b></span></div>';
         }
-        c+='</table></div>';
-        gd.innerHTML+=c;
+        c += '</div>';
+        gd.innerHTML += c;
     }
-    renderSession(data);
-}
-
-function toggleProv(btn){
-    btn.nextElementSibling.classList.toggle("po");
-    btn.textContent=btn.textContent==="Détails variants"?"Masquer":"Détails variants";
-}
-
-function renderSession(data){
-    let t=document.getElementById("session-table");
-    let h='<tr><th>Modèle</th><th style="text-align:right">/100K</th><th style="text-align:right">Combined /1M</th><th>Usage</th></tr>';
-    for(let m of data){
-        if(m.np === 0) continue;
-        let cc=m.cc;
-        let p100=(cc*100000).toFixed(4);
-        let u=cc<0.000003?"Budget":cc<0.000015?"Quotidien":cc<0.000035?"Premium":"Ultra-premium";
-        h+='<tr><td style="font-weight:600">'+m.label+'</td>';
-        h+='<td style="font-family:JetBrains Mono,monospace;text-align:right;color:#10B981">$ '+p100+'</td>';
-        h+='<td style="font-family:JetBrains Mono,monospace;text-align:right;color:#10B981">'+fm(cc)+'</td>';
-        h+='<td>'+u+'</td></tr>';
-    }
-    t.innerHTML=h;
 }
 
 function renderCatalog(data){
@@ -279,11 +225,11 @@ function renderCatalog(data){
     let sorted=data.slice().sort((a,b)=>(a.i+a.o)-(b.i+b.o));
     for(let m of sorted){
         let row=document.createElement("tr");
-        row.innerHTML='<td style="font-family:JetBrains Mono,monospace;font-size:.7rem">'+m.id+'</td>'+
-                      '<td>'+m.name+'</td>'+
-                      '<td style="color:#10B981">'+fms(m.i)+'</td>'+
-                      '<td style="color:#10B981">'+fms(m.o)+'</td>'+
-                      '<td><button class="copy-btn" onclick=\'copyId("'+m.id+'")\'>Copier ID</button></td>';
+        row.innerHTML='<td style="font-family:JetBrains Mono,monospace;font-size:.7rem;color:#818CF8">'+m.id+'</td>' +
+                      '<td>'+m.name+'</td>' +
+                      '<td style="color:#10B981">'+fms(m.i)+'</td>' +
+                      '<td style="color:#10B981">'+fms(m.o)+'</td>' +
+                      '<td><button class="copy-btn" onclick="copyId(\''+m.id+'\')">Copier ID</button></td>';
         tbody.appendChild(row);
     }
 }
@@ -299,7 +245,17 @@ function filterCatalog(){
 
 function copyId(id){
     navigator.clipboard.writeText(id).then(()=>{
-        alert("ID copié : " + id);
+        // Petit feedback visuel temporaire sur le bouton serait top, mais alert simple pour l'instant
+        let btn = event.target;
+        let original = btn.textContent;
+        btn.textContent = "Copié !";
+        btn.style.background = "#10B981";
+        btn.style.color = "#fff";
+        setTimeout(() => {
+            btn.textContent = original;
+            btn.style.background = "";
+            btn.style.color = "";
+        }, 1500);
     });
 }
 
@@ -308,17 +264,17 @@ window.fetchPrices=function(){
     fetch("https://openrouter.ai/api/v1/models").then(r=>r.json()).then(data=>{
         let models=data.data||[];
         let res=processModels(models);
-        let foundCount = res.filter(m => m.np > 0).length;
-        if(foundCount === 0){setStatus("⚠ Aucun modèle trouvé","error-msg");return}
-        lastData=res;renderCards(res);renderCatalog(allCatalogModels);
-        let now=new Date();let ts=now.toLocaleTimeString("fr-FR");
-        setStatus("✅ Mis à jour à "+ts+" ("+foundCount+"/" + REQUESTED_MODELS.length + " modèles trouvés)","live");
+        let foundCount = res.filter(m => m.found).length;
+        if(foundCount === 0){setStatus("⚠ Aucun modèle ciblé trouvé","error-msg");return}
+        lastData=res; renderCards(res); renderCatalog(allCatalogModels);
+        let now=new Date(); let ts=now.toLocaleTimeString("fr-FR");
+        setStatus("✅ Mis à jour à "+ts+" ("+foundCount+"/"+TARGET_MODELS.length+" modèles trouvés)","live");
         spin(false);
         if(refreshTimer)clearTimeout(refreshTimer);
         refreshTimer=setTimeout(window.fetchPrices,REFRESH_MS);
     }).catch(err=>{
         console.error(err);
-        if(lastData){setStatus("⚠ Erseau - dernières données","error-msg")}
+        if(lastData){setStatus("⚠ Réseau - dernières données","error-msg")}
         else{setStatus("❌ Impossible de charger les prix","error-msg")}
         spin(false);
     });
@@ -331,18 +287,6 @@ document.getElementById("mn").addEventListener("click",function(e){
         e.target.classList.add("ac");
         document.querySelectorAll(".vp").forEach(v=>v.classList.remove("on"));
         document.getElementById("v-"+t).classList.add("on");
-    }
-});
-
-document.getElementById("sb").addEventListener("click",function(e){
-    let s=e.target.getAttribute("data-s");
-    if(s&&!e.target.classList.contains("so")){
-        document.querySelectorAll("#sb button").forEach(b=>b.classList.remove("so"));
-        e.target.classList.add("so");
-        let gd=document.getElementById("gd");
-        let cards=Array.prototype.slice.call(gd.querySelectorAll(".cd"));
-        cards.sort((a,b)=>parseFloat(a.getAttribute("data-"+s))-parseFloat(b.getAttribute("data-"+s)));
-        cards.forEach(c=>gd.appendChild(c));
     }
 });
 
