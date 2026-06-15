@@ -103,7 +103,8 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 </div>
 <div id="mn">
   <button class="ac" data-t="pricing">Pricing Ciblé</button>
-  <button data-t="openclaw">OpenClaw</button>
+  <button data-t="comparison">Comparaison Perf</button>
+  <button data-t="openclaw">Routing OpenClaw</button>
   <button data-t="catalog">Catalogue & Ajout</button>
 </div>
 <div id="status-bar" class="status-bar">
@@ -114,6 +115,27 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
 <div id="v-pricing" class="vp on">
 <div id="loading-box"><div class="placeholder">Chargement des données OpenRouter...</div></div>
 <div id="gd" class="gd" style="display:none"></div>
+</div>
+
+<div id="v-comparison" class="vp">
+<div class="oc2">
+<h3>Comparaison des performances (Modèles ciblés)</h3>
+<p style="font-size:.78rem;color:#71718A;margin-bottom:1rem">Scores basés sur les benchmarks officiels (Artificial Analysis & Design Arena). Le <b>Score Valeur</b> estime le rapport performance/prix (plus il est élevé, mieux c'est).</p>
+<div id="comp-loading" class="placeholder">Chargement des benchmarks...</div>
+<div style="max-width:1100px;margin:0 auto;overflow-x:auto;display:none" id="comp-table-wrap">
+<table class="bt" id="comp-table">
+<tr>
+  <th>Modèle</th>
+  <th title="Capacité de raisonnement général">🧠 Intel.</th>
+  <th title="Capacité de génération et de compréhension de code">💻 Code</th>
+  <th title="Capacité à utiliser des outils et agents">⚙️ Agentic</th>
+  <th title="Prix combiné Input + Output pour 1M tokens">💰 Prix / 1M</th>
+  <th title="Score de valeur : (Intelligence + Code) / Prix combiné * 1000">⭐ Valeur</th>
+</tr>
+<tbody id="comp-tbody"></tbody>
+</table>
+</div>
+</div>
 </div>
 
 <div id="v-openclaw" class="vp">
@@ -373,6 +395,63 @@ function renderCards(data){
     }
 }
 
+function renderComparison(apiModels){
+    const tbody = document.getElementById('comp-tbody');
+    const wrap = document.getElementById('comp-table-wrap');
+    const loading = document.getElementById('comp-loading');
+    tbody.innerHTML = '';
+    
+    let compData = [];
+    for (let target of TARGET_MODELS) {
+        const m = apiModels.find(x => x.id === target.id);
+        if (m) {
+            const i = parseFloat(m.pricing?.prompt || 0);
+            const o = parseFloat(m.pricing?.completion || 0);
+            const cc = i + o;
+            const b = m.benchmarks || {};
+            const ai = b.artificial_analysis || {};
+            const intel = ai.intelligence_index || 0;
+            const code = ai.coding_index || 0;
+            const agentic = ai.agentic_index || 0;
+            
+            // Value score: higher is better. (intel + code) / (cc * 1e6) 
+            // We multiply by 1000 to get a readable number
+            const valScore = cc > 0 ? ((intel + code) / (cc * 1e6)) * 1000 : 0;
+            
+            compData.push({
+                label: target.label,
+                color: target.color,
+                intel,
+                code,
+                agentic,
+                cc,
+                valScore,
+                id: target.id
+            });
+        }
+    }
+    
+    // Sort by Value Score descending
+    compData.sort((a, b) => b.valScore - a.valScore);
+    
+    for (let d of compData) {
+        const row = document.createElement('tr');
+        const valClass = d.valScore > 1500 ? 'bst' : (d.valScore > 800 ? 'bgd' : 'bmd');
+        row.innerHTML = `
+            <td><div class="mc2"><div class="d3" style="background:${d.color}"></div>${d.label}<br><span style="font-size:.65rem;color:#71718A;font-weight:400">${d.id}</span></div></td>
+            <td style="text-align:center">${d.intel || '—'}</td>
+            <td style="text-align:center">${d.code || '—'}</td>
+            <td style="text-align:center">${d.agentic || '—'}</td>
+            <td style="text-align:center;font-family:'JetBrains Mono',monospace;color:#10B981">${fm(d.cc)}</td>
+            <td style="text-align:center;font-weight:700" class="${valClass}">${d.valScore > 0 ? d.valScore.toFixed(0) : '—'}</td>
+        `;
+        tbody.appendChild(row);
+    }
+    
+    loading.style.display = 'none';
+    wrap.style.display = 'block';
+}
+
 function renderCatalog(data){
     let tbody=document.getElementById("catalog-body");
     tbody.innerHTML="";
@@ -415,7 +494,10 @@ window.fetchPrices=function(){
         let res=processModels(models);
         let foundCount = res.filter(m => m.found).length;
         if(foundCount === 0){setStatus("⚠ Aucun modèle ciblé trouvé","error-msg");return}
-        lastData=res; renderCards(res); renderCatalog(allCatalogModels);
+        lastData=res; 
+        renderCards(res); 
+        renderCatalog(allCatalogModels);
+        renderComparison(models);
         let now=new Date(); let ts=now.toLocaleTimeString("fr-FR");
         setStatus("✅ Mis à jour à "+ts+" ("+foundCount+"/"+TARGET_MODELS.length+" modèles trouvés)","live");
         spin(false);
