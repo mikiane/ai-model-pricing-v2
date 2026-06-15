@@ -410,9 +410,8 @@ function renderComparison(apiModels){
             const i = parseFloat(m.pricing?.prompt || 0);
             const o = parseFloat(m.pricing?.completion || 0);
             
-            // Ratio réaliste OpenClaw : 70% input, 30% output
-            // Prix pondéré par token × 1 000 000
-            const realisticCostPer1M = (i * 0.7 + o * 0.3) * 1000000;
+            // Prix pondéré par token (70% input, 0.7 + 30% output, 0.3)
+            const weightedPricePerToken = (i * 0.7) + (o * 0.3);
             
             const b = m.benchmarks || {};
             const ai = b.artificial_analysis || {};
@@ -420,10 +419,9 @@ function renderComparison(apiModels){
             const code = ai.coding_index || 0;
             const agentic = ai.agentic_index || 0;
             
-            // Value score: higher is better. (intel + code) / (realisticCostPer1M / 1e6) 
-            // We multiply by 1000 to get a readable number
-            const costInMillions = realisticCostPer1M / 1e6;
-            const valScore = costInMillions > 0 ? ((intel + code) / costInMillions) * 1000 : 0;
+            // Score de valeur : (Intelligence + Code) / (Prix pondéré pour 1M de tokens) * 1000
+            const costPerMillion = weightedPricePerToken * 1000000;
+            const valScore = costPerMillion > 0 ? ((intel + code) / costPerMillion) * 1000 : 0;
             
             compData.push({
                 label: target.label,
@@ -431,7 +429,7 @@ function renderComparison(apiModels){
                 intel,
                 code,
                 agentic,
-                cc: realisticCostPer1M,
+                cc: weightedPricePerToken, // La fonction fm() se chargera de la mise à l'échelle pour l'affichage
                 valScore,
                 id: target.id
             });
