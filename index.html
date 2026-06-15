@@ -129,8 +129,8 @@ body{font-family:'Inter',sans-serif;background:#0A0A1A;color:#E4E4F0;min-height:
   <th title="Capacité de raisonnement général">🧠 Intel.</th>
   <th title="Capacité de génération et de compréhension de code">💻 Code</th>
   <th title="Capacité à utiliser des outils et agents">⚙️ Agentic</th>
-  <th title="Prix combiné Input + Output pour 1M tokens">💰 Prix / 1M</th>
-  <th title="Score de valeur : (Intelligence + Code) / Prix combiné * 1000">⭐ Valeur</th>
+  <th title="Coût estimé pour 1M de tokens (ratio réaliste 70% input / 30% output)">💰 Prix / 1M (70/30)</th>
+  <th title="Score de valeur : (Intelligence + Code) / Prix réaliste * 1000">⭐ Valeur</th>
 </tr>
 <tbody id="comp-tbody"></tbody>
 </table>
@@ -388,7 +388,9 @@ function renderCards(data){
             c += '<div class="pb"><h3>Output / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.o)+'</span></div></div>';
             c += '<div class="pb"><h3>Combiné / 1M</h3><div class="pr"><span class="pv gc" style="font-size:1.1rem;width:100%;text-align:center">'+fm(m.cc)+'</span></div></div>';
             c += '</div>';
-            c += '<div class="sm2" style="justify-content:center"><span>Coût session 100K (50K in + 50K out) : <b class="gc">$' + (m.cc * 100000).toFixed(4) + '</b></span></div>';
+            // Calcul réaliste 70/30 pour 100K tokens : 70K in + 30K out
+            const cost100k = (m.i * 70000) + (m.o * 30000);
+            c += '<div class="sm2" style="justify-content:center"><span>Coût session 100K (70K in + 30K out) : <b class="gc">$' + cost100k.toFixed(4) + '</b></span></div>';
         }
         c += '</div>';
         gd.innerHTML += c;
@@ -407,16 +409,21 @@ function renderComparison(apiModels){
         if (m) {
             const i = parseFloat(m.pricing?.prompt || 0);
             const o = parseFloat(m.pricing?.completion || 0);
-            const cc = i + o;
+            
+            // Ratio réaliste OpenClaw : 70% input, 30% output
+            // Pour 1 000 000 de tokens total : 700 000 in + 300 000 out
+            const realisticCostPer1M = (i * 700000) + (o * 300000);
+            
             const b = m.benchmarks || {};
             const ai = b.artificial_analysis || {};
             const intel = ai.intelligence_index || 0;
             const code = ai.coding_index || 0;
             const agentic = ai.agentic_index || 0;
             
-            // Value score: higher is better. (intel + code) / (cc * 1e6) 
+            // Value score: higher is better. (intel + code) / (realisticCostPer1M / 1e6) 
             // We multiply by 1000 to get a readable number
-            const valScore = cc > 0 ? ((intel + code) / (cc * 1e6)) * 1000 : 0;
+            const costInMillions = realisticCostPer1M / 1e6;
+            const valScore = costInMillions > 0 ? ((intel + code) / costInMillions) * 1000 : 0;
             
             compData.push({
                 label: target.label,
@@ -424,7 +431,7 @@ function renderComparison(apiModels){
                 intel,
                 code,
                 agentic,
-                cc,
+                cc: realisticCostPer1M,
                 valScore,
                 id: target.id
             });
